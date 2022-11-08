@@ -1,131 +1,123 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { select } from "d3-selection";
-import { range, extent, group, map, max, least, InternSet } from "d3-array";
+import { range, extent, group, map, max, InternSet } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { axisLeft, axisBottom } from "d3-axis";
 import { line as Line, curveLinear } from "d3-shape";
 import { pointer } from "d3-selection";
+import { zoom } from "d3-zoom";
+import Resizer from "./resizer";
 
-const margin = { top: 80, right: 60, bottom: 80, left: 60 };
-const width = 600 - margin.left - margin.right;
-const height = 600 - margin.top - margin.bottom;
+const hash = window.btoa(`LineChart-${Date.now()}`);
 
 function LineChart({
-    data,                       // data source
-    defined,                    // for gaps in data
-    width = 640,        // outer width, in pixels
-    height = 400,       // outer height, in pixels
+    data,                               // data source
+    width = 640,                // outer width, in pixels
+    height = 400,               // outer height, in pixels
     margin = {
-        top: 20,                // top margin, in pixels
-        right: 30,              // right margin, in pixels
-        bottom: 30,             // bottom margin, in pixels
-        left: 40                // left margin, in pixels
+        top: 20,                        // top margin, in pixels
+        right: 30,                      // right margin, in pixels
+        bottom: 30,                     // bottom margin, in pixels
+        left: 40                        // left margin, in pixels
     },
-    color = "currentColor", // stroke color of line, as a constant or a function of *z*
-    strokeLinecap,              // stroke line cap of line
-    strokeLinejoin,             // stroke line join of line
-    strokeWidth = 1.5,  // stroke width of line
-    strokeOpacity,              // stroke opacity of line
-    mixBlendMode = "multiply", // blend mode of lines
-    options                 // option data
+    color = "currentColor",
+    strokeLinecap = "round",      // stroke line cap of the line
+    strokeLinejoin = "round",     // stroke line join of the line
+    strokeWidth = 1.5,
+    strokeOpacity = 1,           // stroke opacity of line
+    mixBlendMode = "multiply",
+    options                              // option data
 }) {
     const { top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft } = margin;
-    const { x, y, type, xLabel, yLabel, xFormat, yFormat, voronoi } = options;
-    const graphRef = useRef(null);
+    const { x, y, type, xLabel, yLabel, xFormat, yFormat } = options;
+    const [currentZoomState, setCurrentZoomState] = useState();
+    const chartRef = useRef(null);
+    const svgRef = useRef(null);
+    const dimensions = Resizer(chartRef);
 
     useEffect(() => {
-        if (data && graphRef.current) {
-            const svg = select(graphRef.current);
+        if (data && svgRef.current) {
+            const { width: posX, height: posY } = dimensions || chartRef.current.getBoundingClientRect();
+            const svg = select(svgRef.current);
+            const svgContent = svg.select(".content");
 
-            /** Compute values */
-            const X = map(data, x);
-            const Y = map(data, y);
-            const Z = map(data, type);
-            const O = map(data, value => value);
-            const D = map(data, defined ?? ((d, i) => !isNaN(X[i]) && !isNaN(Y[i])));
-
-            /** Compute default domains */
-            const xDomain = extent(X).map(data => new Date(data));
-            const yDomain = [0, max(Y, data => typeof data === "string" ? +data : data)];
-            const zDomain = new InternSet(Z);
+            /** Compute values and domain */
+            const xSet = map(data, x);
+            const ySet = map(data, y);
+            const typeSet = map(data, type);
+            const definedSet = map(data, (v, i) => !isNaN(xSet[i]) && !isNaN(ySet[i])); // clean NaN ySet
+            const xDomain = extent(xSet);
+            const yDomain = extent(ySet);//[, max(ySet, data => typeof data === "string" ? +data : data)];
+            const typeDomain = new InternSet(typeSet);
 
             /** Omit any data not present in the z-domain. */
-            const I = range(X.length).filter(i => zDomain.has(Z[i]));
+            const safe = range(xSet.length).filter(i => typeDomain.has(typeSet[i]));
 
             /** Construct scales and axes */
             const xScale = scaleTime(xDomain, [marginLeft, width - marginRight]);
             const yScale = scaleLinear(yDomain, [height - marginBottom, marginTop]);
-            const xAxis = axisBottom(xScale).ticks(width / 80).tickSizeOuter(0);
-            const yAxis = axisLeft(yScale).ticks(height / 60, yFormat);
+            const xAxis = axisBottom(xScale);
+            const yAxis = axisLeft(yScale);
+            if (currentZoomState) xScale.domain(currentZoomState.rescaleX(xScale).domain());
 
             /** Construct a line generator */
-            const line = Line().defined(i => D[i]).curve(curveLinear).x(i => xScale(X[i])).y(i => yScale(Y[i]));
+            const line = Line()
+                .defined(i => definedSet[i])
+                .curve(curveLinear)
+                .x(i => xScale(xSet[i]))
+                .y(i => yScale(ySet[i]));
 
-            svg.attr("width", width)
-                .attr("height", height)
+            svg.attr("width", width).attr("height", height)
                 .attr("viewBox", [0, 0, width, height])
                 .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
                 .style("-webkit-tap-highlight-color", "transparent")
-                .on("pointerenter", pointerentered)
-                .on("pointermove", pointermoved)
-                .on("pointerleave", pointerleft)
-                .on("touchstart", event => event.preventDefault());
 
-            svg.append("g")
+            // build axis
+            svg.select(".x-axis")
                 .attr("transform", `translate(0,${height - marginBottom})`)
                 .call(xAxis);
+            svg.select(".y-axis")
+                .attr("transform", `translate(${marginLeft}, 0)`)
+                .call(yAxis)
+                .call(g => g.select(".domain").remove()); // not require ugly line
 
-            const path = svg.append("g")
-                .attr("fill", "none")
-                .attr("stroke", typeof color === "string" ? color : null)
-                .attr("stroke-linecap", strokeLinecap)
-                .attr("stroke-linejoin", strokeLinejoin)
-                .attr("stroke-width", strokeWidth)
-                .attr("stroke-opacity", strokeOpacity)
+            svgContent
+                 .attr("fill", "none")
+                 .attr("stroke", typeof color === "string" ? color : null)
+                 .attr("stroke-linecap", strokeLinecap)
+                 .attr("stroke-linejoin", strokeLinejoin)
+                 .attr("stroke-width", strokeWidth)
+                 .attr("stroke-opacity", strokeOpacity)
                 .selectAll("path")
-                .data(group(I, i => Z[i]))
+                .data(group(safe, i => typeSet[i]))
                 .join("path")
-                .style("mix-blend-mode", mixBlendMode)
-                .attr("stroke", typeof color === "function" ? ([z]) => color(z) : null)
-                .attr("d", ([, I]) => line(I));
+                 .style("mix-blend-mode", mixBlendMode)
+                 .attr("stroke", typeof color === "function" ? ([z]) => color(z) : null)
+                 .attr("d", ([v, i]) => line(i));
+            console.log(group(safe, i => typeSet[i]));
 
-            const dot = svg.append("g")
-                .attr("display", "none");
-
-            dot.append("circle")
-                .attr("r", 2.5);
-
-            dot.append("text")
-                .attr("font-family", "sans-serif")
-                .attr("font-size", 10)
-                .attr("text-anchor", "middle")
-                .attr("y", -8);
-
-            function pointermoved(event) {
-                const [xm, ym] = pointer(event);
-                const i = least(I, i => Math.hypot(xScale(X[i]) - xm, yScale(Y[i]) - ym)); // closest point
-                path.style("stroke", ([z]) => Z[i] === z ? null : "#ddd").filter(([z]) => Z[i] === z).raise();
-                dot.attr("transform", `translate(${xScale(X[i])},${yScale(Y[i])})`);
-                //if (T) dot.select("text").text(T[i]);
-                svg.property("value", O[i]).dispatch("input", {bubbles: true});
-            }
-
-            function pointerentered() {
-                path.style("mix-blend-mode", null).style("stroke", "#ddd");
-                dot.attr("display", null);
-            }
-
-            function pointerleft() {
-                path.style("mix-blend-mode", mixBlendMode).style("stroke", null);
-                dot.attr("display", "none");
-                svg.node().value = null;
-                svg.dispatch("input", {bubbles: true});
-            }
+            /** Zoom */
+            const zoomBehavior = zoom()
+                .scaleExtent([0.5, 5])
+                .translateExtent([[0, 0], [posX, posY]])
+                .on("zoom", event => setCurrentZoomState(event.transform));
+            svg.call(zoomBehavior);
         }
-    }, [data]);
+    }, [currentZoomState, data, dimensions]);
 
     return(
-        <svg ref={graphRef}></svg>
+        <div ref={chartRef} style={{ marginBottom: "2rem" }}>
+          <svg ref={svgRef}>
+            <defs>
+              <clipPath id={hash}>
+                <rect x="0" y="0" width="100%" height="100%" />
+              </clipPath>
+            </defs>
+            <g className="content" clipPath={`url(#${hash})`} />
+            <g className="x-axis" />
+            <g className="y-axis" />
+          </svg>
+        </div>
     );
 }
 

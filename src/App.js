@@ -5,7 +5,7 @@ import {Loader} from "v1";
 function App() {
   return (
     <div className="App">
-      <Loader></Loader>
+      <Loader/>
     </div>
   );
 }

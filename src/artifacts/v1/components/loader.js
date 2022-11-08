@@ -55,8 +55,9 @@ function Loader() {
     return !!chartData ?
         (
             <LineChart data={chartData}
+                       color="steelblue"
                        options={{
-                           x: value => value["time"],
+                           x: value => new Date(value["time"]),
                            y: value => value["anomaly"],
                            type: value => value["type"]
                        }}>

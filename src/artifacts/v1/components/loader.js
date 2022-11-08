@@ -66,8 +66,8 @@ function Loader() {
                                default:                 return "#000000";
                            }
                        }}
-                       tip={value => {
-                           switch (value["type"]) {
+                       tip={type => {
+                           switch (type) {
                                case "GlobalAnnual":     return "Global Annual";
                                case "GlobalMonthly":    return "Global Monthly";
                                case "NHAnnual":         return "Northern-Hemisphere Annual";

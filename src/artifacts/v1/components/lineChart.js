@@ -7,14 +7,15 @@ import { line as Line, curveLinear } from "d3-shape";
 import { pointer } from "d3-selection";
 import { zoom } from "d3-zoom";
 import Resizer from "./resizer";
+import LabelGroup from "./labelGroup";
 
 const hash = window.btoa(`LineChart-${Date.now()}`);
 
 function LineChart({
     data,                               // data source
     tip,                                // tip source
-    width = 640,                // outer width, in pixels
-    height = 400,               // outer height, in pixels
+    width = 960,                // outer width, in pixels
+    height = 600,               // outer height, in pixels
     margin = {
         top: 20,                        // top margin, in pixels
         right: 30,                      // right margin, in pixels
@@ -32,7 +33,7 @@ function LineChart({
     const { top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft } = margin;
     const { x, y, type, xLabel, yLabel, xFormat, yFormat } = options;
     const [currentZoomState, setCurrentZoomState] = useState();
-    const [typeList, setTypeList] = useState();
+    const [typeList, setTypeList] = useState([]);
     const chartRef = useRef(null);
     const svgRef = useRef(null);
     const dimensions = Resizer(chartRef);
@@ -55,7 +56,7 @@ function LineChart({
             const typeDomain = new InternSet(typeSet);
 
             /** Fetch tooltip */
-            const tooltip = !!tip ? map(data, tip) : typeDomain;
+            const tooltip = !!tip ? map(data, ({ type }) => tip(type)) : typeDomain;
 
             /** Omit any data not present in the z-domain. */
             const safe = range(xSet.length).filter(i => typeDomain.has(typeSet[i]));
@@ -84,12 +85,8 @@ function LineChart({
                 .on("touchstart", event => event.preventDefault());
 
             // build axis
-            svg.select(".x-axis")
-                .attr("transform", `translate(0,${height - marginBottom})`)
-                .call(xAxis);
-            svg.select(".y-axis")
-                .attr("transform", `translate(${marginLeft}, 0)`)
-                .call(yAxis)
+            svg.select(".x-axis").attr("transform", `translate(0,${height - marginBottom})`).call(xAxis);
+            svg.select(".y-axis").attr("transform", `translate(${marginLeft}, 0)`).call(yAxis)
                 .call(g => g.select(".domain").remove()); // not require ugly line
 
             const path = svgContent
@@ -110,7 +107,6 @@ function LineChart({
 
             /** mouse action */
             function pointermoved(event) {
-                console.log("pointer moved");
                 const [xm, ym] = pointer(event);
                 const i = least(safe, i => Math.hypot(xScale(xSet[i]) - xm, yScale(ySet[i]) - ym)); // closest point
                 path.style("stroke", ([z]) => typeSet[i] === z ? null : typeof color === "function" ? `${color(z)}50` : "#ddd").filter(([z]) => typeSet[i] === z).raise();
@@ -119,12 +115,10 @@ function LineChart({
                 svg.property("value", dataSet[i]).dispatch("input", { bubbles: true });
             }
             function pointerentered() {
-                console.log("pointer entered");
                 path.style("mix-blend-mode", null).style("stroke", "#ddd");
                 svgHandle.attr("display", null);
             }
             function pointerleft() {
-                console.log("pointer left");
                 path.style("mix-blend-mode", mixBlendMode).style("stroke", null);
                 svgHandle.attr("display", "none");
                 svg.node().value = null;
@@ -133,24 +127,26 @@ function LineChart({
 
             /** Zoom */
             svg.call(zoom().scaleExtent([0.5, 5]).translateExtent([[0, 0], [posX, posY]]).on("zoom", event => setCurrentZoomState(event.transform)));
+
+            setTypeList(Array.from(typeDomain.keys()).map(item => ({ text: tip(item), color: typeof color === "function" ? color(item) : color })));
         }
     }, [currentZoomState, data, dimensions]);
 
     return(
-        <div ref={chartRef} style={{ marginBottom: "2rem" }}>
-          <div className="labels">
-
-          </div>
+        <div ref={chartRef} style={{ width, height, marginBottom: "2rem" }}>
+          <LabelGroup type={typeList}></LabelGroup>
           <svg ref={svgRef}>
             <defs>
               <clipPath id={hash}>
-                <rect x="0" y="0" width="100%" height="100%" />
+                <rect x={marginLeft} y={marginTop}
+                      width={width - marginRight - marginLeft}
+                      height={height - marginBottom - marginTop} />
               </clipPath>
             </defs>
             <g className="content" clipPath={`url(#${hash})`} />
             <g className="dot">
-                <circle r={2.5} fill="black" />
-                <text className="tip" fontSize={10} textAnchor="middle" y={-8} />
+              <circle r={2.5} fill="black" />
+              <text className="tip" fontSize={10} textAnchor="middle" y={-8} />
             </g>
             <g className="x-axis" />
             <g className="y-axis" />

@@ -55,7 +55,28 @@ function Loader() {
     return !!chartData ?
         (
             <LineChart data={chartData}
-                       color="steelblue"
+                       color={type => {
+                           switch (type) {
+                               case "GlobalAnnual":     return "#ff0000";
+                               case "GlobalMonthly":    return "#800000";
+                               case "NHAnnual":         return "#00ff00";
+                               case "NHMonthly":        return "#008800";
+                               case "SHAnnual":         return "#0000ff";
+                               case "SHMonthly":        return "#000088";
+                               default:                 return "#000000";
+                           }
+                       }}
+                       tip={value => {
+                           switch (value["type"]) {
+                               case "GlobalAnnual":     return "Global Annual";
+                               case "GlobalMonthly":    return "Global Monthly";
+                               case "NHAnnual":         return "Northern-Hemisphere Annual";
+                               case "NHMonthly":        return "Northern-Hemisphere Monthly";
+                               case "SHAnnual":         return "Southern-Hemisphere Annual";
+                               case "SHMonthly":        return "Southern-Hemisphere Monthly";
+                               default:                 throw new Error("Invalid data");
+                           }
+                       }}
                        options={{
                            x: value => new Date(value["time"]),
                            y: value => value["anomaly"],

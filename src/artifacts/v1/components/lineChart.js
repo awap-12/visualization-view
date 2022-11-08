@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { select } from "d3-selection";
-import { range, extent, group, map, max, InternSet } from "d3-array";
+import { range, extent, group, map, least, InternSet } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { axisLeft, axisBottom } from "d3-axis";
 import { line as Line, curveLinear } from "d3-shape";
@@ -12,6 +12,7 @@ const hash = window.btoa(`LineChart-${Date.now()}`);
 
 function LineChart({
     data,                               // data source
+    tip,                                // tip source
     width = 640,                // outer width, in pixels
     height = 400,               // outer height, in pixels
     margin = {
@@ -31,6 +32,7 @@ function LineChart({
     const { top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft } = margin;
     const { x, y, type, xLabel, yLabel, xFormat, yFormat } = options;
     const [currentZoomState, setCurrentZoomState] = useState();
+    const [typeList, setTypeList] = useState();
     const chartRef = useRef(null);
     const svgRef = useRef(null);
     const dimensions = Resizer(chartRef);
@@ -39,16 +41,21 @@ function LineChart({
         if (data && svgRef.current) {
             const { width: posX, height: posY } = dimensions || chartRef.current.getBoundingClientRect();
             const svg = select(svgRef.current);
+            const svgHandle = svg.select(".dot");
             const svgContent = svg.select(".content");
 
             /** Compute values and domain */
             const xSet = map(data, x);
             const ySet = map(data, y);
             const typeSet = map(data, type);
+            const dataSet = map(data, value => value);
             const definedSet = map(data, (v, i) => !isNaN(xSet[i]) && !isNaN(ySet[i])); // clean NaN ySet
             const xDomain = extent(xSet);
             const yDomain = extent(ySet);//[, max(ySet, data => typeof data === "string" ? +data : data)];
             const typeDomain = new InternSet(typeSet);
+
+            /** Fetch tooltip */
+            const tooltip = !!tip ? map(data, tip) : typeDomain;
 
             /** Omit any data not present in the z-domain. */
             const safe = range(xSet.length).filter(i => typeDomain.has(typeSet[i]));
@@ -71,6 +78,10 @@ function LineChart({
                 .attr("viewBox", [0, 0, width, height])
                 .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
                 .style("-webkit-tap-highlight-color", "transparent")
+                .on("pointerenter", pointerentered)
+                .on("pointermove", pointermoved)
+                .on("pointerleave", pointerleft)
+                .on("touchstart", event => event.preventDefault());
 
             // build axis
             svg.select(".x-axis")
@@ -81,7 +92,7 @@ function LineChart({
                 .call(yAxis)
                 .call(g => g.select(".domain").remove()); // not require ugly line
 
-            svgContent
+            const path = svgContent
                  .attr("fill", "none")
                  .attr("stroke", typeof color === "string" ? color : null)
                  .attr("stroke-linecap", strokeLinecap)
@@ -94,19 +105,42 @@ function LineChart({
                  .style("mix-blend-mode", mixBlendMode)
                  .attr("stroke", typeof color === "function" ? ([z]) => color(z) : null)
                  .attr("d", ([v, i]) => line(i));
+
             console.log(group(safe, i => typeSet[i]));
 
+            /** mouse action */
+            function pointermoved(event) {
+                console.log("pointer moved");
+                const [xm, ym] = pointer(event);
+                const i = least(safe, i => Math.hypot(xScale(xSet[i]) - xm, yScale(ySet[i]) - ym)); // closest point
+                path.style("stroke", ([z]) => typeSet[i] === z ? null : typeof color === "function" ? `${color(z)}50` : "#ddd").filter(([z]) => typeSet[i] === z).raise();
+                svgHandle.attr("transform", `translate(${xScale(xSet[i])}, ${yScale(ySet[i])})`);
+                svgHandle.select("text").text(tooltip[i]);
+                svg.property("value", dataSet[i]).dispatch("input", { bubbles: true });
+            }
+            function pointerentered() {
+                console.log("pointer entered");
+                path.style("mix-blend-mode", null).style("stroke", "#ddd");
+                svgHandle.attr("display", null);
+            }
+            function pointerleft() {
+                console.log("pointer left");
+                path.style("mix-blend-mode", mixBlendMode).style("stroke", null);
+                svgHandle.attr("display", "none");
+                svg.node().value = null;
+                svg.dispatch("input", { bubbles: true });
+            }
+
             /** Zoom */
-            const zoomBehavior = zoom()
-                .scaleExtent([0.5, 5])
-                .translateExtent([[0, 0], [posX, posY]])
-                .on("zoom", event => setCurrentZoomState(event.transform));
-            svg.call(zoomBehavior);
+            svg.call(zoom().scaleExtent([0.5, 5]).translateExtent([[0, 0], [posX, posY]]).on("zoom", event => setCurrentZoomState(event.transform)));
         }
     }, [currentZoomState, data, dimensions]);
 
     return(
         <div ref={chartRef} style={{ marginBottom: "2rem" }}>
+          <div className="labels">
+
+          </div>
           <svg ref={svgRef}>
             <defs>
               <clipPath id={hash}>
@@ -114,6 +148,10 @@ function LineChart({
               </clipPath>
             </defs>
             <g className="content" clipPath={`url(#${hash})`} />
+            <g className="dot">
+                <circle r={2.5} fill="black" />
+                <text className="tip" fontSize={10} textAnchor="middle" y={-8} />
+            </g>
             <g className="x-axis" />
             <g className="y-axis" />
           </svg>

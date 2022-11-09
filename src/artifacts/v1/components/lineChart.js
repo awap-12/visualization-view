@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { select } from "d3-selection";
 import { range, extent, group, map, least, InternSet } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
@@ -10,7 +10,6 @@ import Resizer from "./resizer";
 import LabelGroup from "./labelGroup";
 
 const hash = window.btoa(`LineChart-${Date.now()}`);
-const context = createContext();
 
 function LineChart({
     data,                               // data source
@@ -32,7 +31,7 @@ function LineChart({
     options                              // option data
 }) {
     const { top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft } = margin;
-    const { x, y, type, xLabel, yLabel, xFormat, yFormat } = options;
+    const { x, y, type, /* xLabel, yLabel, xFormat, yFormat */ } = options;
     const [currentZoomState, setCurrentZoomState] = useState();
     const [typeList, setTypeList] = useState([]);
     const [linePath, setLinePath] = useState();
@@ -133,6 +132,7 @@ function LineChart({
                 color: typeof color === "function" ? color(item) : color }
             )));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentZoomState, data, dimensions]);
 
     function handleLabels(data) {

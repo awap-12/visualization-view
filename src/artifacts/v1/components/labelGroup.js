@@ -6,6 +6,7 @@ function Label({ index, data, callback }) {
     const [state, setState] = useState(true);
     const { raw, text, color } = data;
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => callback(index, raw, state), [callback, index, state]);
 
     return (

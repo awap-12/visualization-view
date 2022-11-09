@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { csv } from "d3-fetch";
-import { ascending } from "d3-array"
-import { LineChart } from "shared";
+import React, {useEffect, useState} from "react";
+import {csv} from "d3-fetch";
+import {ascending} from "d3-array"
+import LineChart from "shared";
 
 //region TODO: Move to React context and replace with correct api
 import GlobalAnnual from "../fixtures/HadCRUT-global-annual.csv";

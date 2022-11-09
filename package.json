@@ -12,7 +12,8 @@
     "react-router": "^6.4.3",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
-    "v1": "file:./src/artifacts/v1",
+    "v1": "file:src/artifacts/v1",
+    "v2": "file:src/artifacts/v2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

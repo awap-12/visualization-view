@@ -1,0 +1,12 @@
+{
+    "name": "shared",
+    "version": "1.0.0",
+    "dependencies": {
+        "d3-array": "latest",
+        "d3-axis": "latest",
+        "d3-scale": "latest",
+        "d3-selection": "latest",
+        "d3-shape": "latest",
+        "d3-zoom": "latest"
+    }
+}

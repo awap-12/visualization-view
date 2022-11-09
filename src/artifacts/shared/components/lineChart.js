@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { select } from "d3-selection";
 import { range, extent, group, map, least, InternSet } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { axisLeft, axisBottom } from "d3-axis";
 import { line as Line, curveLinear } from "d3-shape";
-import { pointer } from "d3-selection";
+import { select, pointer } from "d3-selection";
 import { zoom } from "d3-zoom";
 import Resizer from "./resizer";
 import LabelGroup from "./labelGroup";
@@ -57,7 +56,7 @@ function LineChart({
             const typeDomain = new InternSet(typeSet);
 
             /** Fetch tooltip */
-            const tooltip = !!tip ? map(data, ({ type }) => tip(type)) : typeDomain;
+            const tooltip = !!tip ? map(data, (value => tip(type(value)))) : typeDomain;
 
             /** Omit any data not present in the z-domain. */
             const safe = range(xSet.length).filter(i => typeDomain.has(typeSet[i]));

@@ -16,6 +16,7 @@
     "v2": "file:src/artifacts/v2",
     "v3": "file:src/artifacts/v3",
     "v4": "file:src/artifacts/v4",
+    "v5": "file:src/artifacts/v5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

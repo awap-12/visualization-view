@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { scaleLinear } from "d3-scale";
 import { ascending } from "d3-array"
 import { csv } from "d3-fetch";
 import { LineChart } from "shared";
 
 //region TODO: Move to React context and replace with correct api
-import Co2Annual from "../fixtures/co2-annual.csv";
-import Co2Monthly from "../fixtures/co2-monthly.csv";
+import vostok from "../fixtures/vostok.csv";
 
 /**
  * When handling import could use Promise.all([import])
@@ -16,8 +16,8 @@ import Co2Monthly from "../fixtures/co2-monthly.csv";
  * ]).then([GlobalAnnual, ......] => { GlobalAnnual, ...... });
  *
  */
-const handlePath = () => ({ Co2Annual, Co2Monthly });
-const handleData = data => data.sort((a, b) => ascending(a.time, b.time));
+const handlePath = () => ({ vostok });
+const handleData = data => data.sort((a, b) => ascending(a.year, b.year));
 
 //endregion
 
@@ -33,8 +33,8 @@ function Loader() {
                     return {
                         type: key,
                         // monthly contain yyyy-mm, yearly pickup middle yyyy-06
-                        time: "month" in data ? `${data["year"]}-${["0", "0", ...data["month"]].slice(-2).join('')}` : `${data["year"]}-01-01`,
-                        ppm: "average" in data ? +data["average"] : +data["mean"],
+                        year: +data["Mean"],
+                        ppm: +data["ppmv"],
                     }
                 }));
             });
@@ -51,22 +51,22 @@ function Loader() {
             <LineChart data={chartData}
                        color={type => {
                            switch (type) {
-                               case "Co2Annual":         return "#00ff00";
-                               case "Co2Monthly":        return "#008800";
-                               default:                  return "#000000";
+                               case "vostok":           return "#0000ff";
+                               default:                 return "#000000";
                            }
                        }}
                        tip={type => {
                            switch (type) {
-                               case "Co2Annual":        return "Global Annual";
-                               case "Co2Monthly":       return "Global Monthly";
+                               case "vostok":           return "Historical CO2 Record from the Vostok Ice Core";
                                default:                 throw new Error("Invalid data");
                            }
                        }}
                        options={{
-                           x: value => new Date(value["time"]),
+                           x: value => value["year"],
                            y: value => value["ppm"],
-                           type: value => value["type"]
+                           type: value => value["type"],
+                           xType: scaleLinear,
+                           yType: scaleLinear
                        }}>
             </LineChart>
         ) : <h1>Loading...</h1>;

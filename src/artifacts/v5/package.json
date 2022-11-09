@@ -1,0 +1,10 @@
+{
+  "name": "v5",
+  "version": "1.0.0",
+  "dependencies": {
+    "d3-array": "latest",
+    "d3-fetch": "latest",
+    "d3-scale": "latest",
+    "shared": "file:../shared"
+  }
+}

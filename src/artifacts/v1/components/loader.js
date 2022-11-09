@@ -37,7 +37,7 @@ function Loader() {
                     return {
                         type: key,
                         // monthly contain yyyy-mm, yearly pickup middle yyyy-06
-                        time: data["Time"].includes("-") ? data["Time"] : `${data["Time"]}-06`,
+                        time: data["Time"].includes("-") ? data["Time"] : `${data["Time"]}-01-01`,
                         anomaly: +data["Anomaly (deg C)"],
                         lowerConfidenceLimit: +data["Lower confidence limit (2.5%)"],
                         upperConfidenceLimit: +data["Upper confidence limit (97.5%)"]

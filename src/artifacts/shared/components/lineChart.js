@@ -106,24 +106,24 @@ function LineChart({
             function pointermoved(event) {
                 const [xm, ym] = pointer(event);
                 const i = least(safe, i => Math.hypot(xScale(xSet[i]) - xm, yScale(ySet[i]) - ym)); // closest point
-                linePath.style("stroke", ([z]) => typeSet[i] === z ? null : typeof color === "function" ? `${color(z)}50` : "#ddd").filter(([z]) => typeSet[i] === z).raise();
+                linePath?.style("stroke", ([z]) => typeSet[i] === z ? null : typeof color === "function" ? `${color(z)}50` : "#ddd").filter(([z]) => typeSet[i] === z).raise();
                 svgHandle.attr("transform", `translate(${xScale(xSet[i])}, ${yScale(ySet[i])})`);
                 svgHandle.select("text").text(tooltip[i]);
                 svg.property("value", dataSet[i]).dispatch("input", { bubbles: true });
             }
             function pointerentered() {
-                linePath.style("mix-blend-mode", null).style("stroke", "#ddd");
+                linePath?.style("mix-blend-mode", null).style("stroke", "#ddd");
                 svgHandle.attr("display", null);
             }
             function pointerleft() {
-                linePath.style("mix-blend-mode", mixBlendMode).style("stroke", null);
+                linePath?.style("mix-blend-mode", mixBlendMode).style("stroke", null);
                 svgHandle.attr("display", "none");
                 svg.node().value = null;
                 svg.dispatch("input", { bubbles: true });
             }
 
             /** Zoom */
-            svg.call(zoom().scaleExtent([0.5, 5]).translateExtent([[0, 0], [posX, posY]]).on("zoom", event => setCurrentZoomState(event.transform)));
+            svg.call(zoom().scaleExtent([0.9, 50]).translateExtent([[0, 0], [posX, posY]]).on("zoom", event => setCurrentZoomState(event.transform)));
 
             setTypeList(Array.from(typeDomain.keys()).map(item => ({
                 raw: item,

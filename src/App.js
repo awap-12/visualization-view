@@ -4,6 +4,7 @@ import V2 from "v2";
 import V3 from "v3";
 import V4 from "v4";
 import V5 from "v5";
+import V6 from "v6";
 import { Route, Routes } from "react-router";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/artifact/v3" element={<V3 />} />
         <Route path="/artifact/v4" element={<V4 />} />
         <Route path="/artifact/v5" element={<V5 />} />
+        <Route path="/artifact/v6" element={<V6 />} />
         <Route path="*" element={<h1>Error</h1>} />
       </Routes>
     </div>

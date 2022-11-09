@@ -4,6 +4,8 @@
 * [v1 Global historical surface temperature anomalies from January 1850 onwards](https://awap-12.github.io/client/#/artifact/v1)
 * [v2 Northern Hemisphere 2,000-year temperature reconstruction](https://awap-12.github.io/client/#/artifact/v2)
 * [v3 Atmospheric CO2 concentrations from Mauna Loa measurements starting](https://awap-12.github.io/client/#/artifact/v3)
+* [v4 Antarctic Ice Core records of atmospheric CO2 ratios combined with Mauna Loa measurements](https://awap-12.github.io/client/#/artifact/v4)
+* [v5 Vostok Ice Core CO2 measurements, 417160 - 2342 years](https://awap-12.github.io/client/#/artifact/v5)
 
 ## Available Scripts
 

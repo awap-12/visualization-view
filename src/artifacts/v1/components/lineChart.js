@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {createContext, useEffect, useRef, useState} from "react";
 import { select } from "d3-selection";
 import { range, extent, group, map, least, InternSet } from "d3-array";
 import { scaleLinear, scaleTime } from "d3-scale";
@@ -10,6 +10,7 @@ import Resizer from "./resizer";
 import LabelGroup from "./labelGroup";
 
 const hash = window.btoa(`LineChart-${Date.now()}`);
+const context = createContext();
 
 function LineChart({
     data,                               // data source
@@ -34,6 +35,7 @@ function LineChart({
     const { x, y, type, xLabel, yLabel, xFormat, yFormat } = options;
     const [currentZoomState, setCurrentZoomState] = useState();
     const [typeList, setTypeList] = useState([]);
+    const [linePath, setLinePath] = useState();
     const chartRef = useRef(null);
     const svgRef = useRef(null);
     const dimensions = Resizer(chartRef);
@@ -69,8 +71,7 @@ function LineChart({
             if (currentZoomState) xScale.domain(currentZoomState.rescaleX(xScale).domain());
 
             /** Construct a line generator */
-            const line = Line()
-                .defined(i => definedSet[i])
+            const line = Line().defined(i => definedSet[i])
                 .curve(curveLinear)
                 .x(i => xScale(xSet[i]))
                 .y(i => yScale(ySet[i]));
@@ -89,7 +90,7 @@ function LineChart({
             svg.select(".y-axis").attr("transform", `translate(${marginLeft}, 0)`).call(yAxis)
                 .call(g => g.select(".domain").remove()); // not require ugly line
 
-            const path = svgContent
+            setLinePath(svgContent
                  .attr("fill", "none")
                  .attr("stroke", typeof color === "string" ? color : null)
                  .attr("stroke-linecap", strokeLinecap)
@@ -101,25 +102,23 @@ function LineChart({
                 .join("path")
                  .style("mix-blend-mode", mixBlendMode)
                  .attr("stroke", typeof color === "function" ? ([z]) => color(z) : null)
-                 .attr("d", ([v, i]) => line(i));
-
-            console.log(group(safe, i => typeSet[i]));
+                 .attr("d", ([v, i]) => line(i)));
 
             /** mouse action */
             function pointermoved(event) {
                 const [xm, ym] = pointer(event);
                 const i = least(safe, i => Math.hypot(xScale(xSet[i]) - xm, yScale(ySet[i]) - ym)); // closest point
-                path.style("stroke", ([z]) => typeSet[i] === z ? null : typeof color === "function" ? `${color(z)}50` : "#ddd").filter(([z]) => typeSet[i] === z).raise();
+                linePath.style("stroke", ([z]) => typeSet[i] === z ? null : typeof color === "function" ? `${color(z)}50` : "#ddd").filter(([z]) => typeSet[i] === z).raise();
                 svgHandle.attr("transform", `translate(${xScale(xSet[i])}, ${yScale(ySet[i])})`);
                 svgHandle.select("text").text(tooltip[i]);
                 svg.property("value", dataSet[i]).dispatch("input", { bubbles: true });
             }
             function pointerentered() {
-                path.style("mix-blend-mode", null).style("stroke", "#ddd");
+                linePath.style("mix-blend-mode", null).style("stroke", "#ddd");
                 svgHandle.attr("display", null);
             }
             function pointerleft() {
-                path.style("mix-blend-mode", mixBlendMode).style("stroke", null);
+                linePath.style("mix-blend-mode", mixBlendMode).style("stroke", null);
                 svgHandle.attr("display", "none");
                 svg.node().value = null;
                 svg.dispatch("input", { bubbles: true });
@@ -128,13 +127,25 @@ function LineChart({
             /** Zoom */
             svg.call(zoom().scaleExtent([0.5, 5]).translateExtent([[0, 0], [posX, posY]]).on("zoom", event => setCurrentZoomState(event.transform)));
 
-            setTypeList(Array.from(typeDomain.keys()).map(item => ({ text: tip(item), color: typeof color === "function" ? color(item) : color })));
+            setTypeList(Array.from(typeDomain.keys()).map(item => ({
+                raw: item,
+                text: tip(item),
+                color: typeof color === "function" ? color(item) : color }
+            )));
         }
     }, [currentZoomState, data, dimensions]);
 
+    function handleLabels(data) {
+        linePath.each(function([name]) {
+            for (const { key, state } of data) {
+                if (key === name) select(this).attr("display", state ? null : "none");
+            }
+        });
+    }
+
     return(
         <div ref={chartRef} style={{ width, height, marginBottom: "2rem" }}>
-          <LabelGroup type={typeList}></LabelGroup>
+          <LabelGroup type={typeList} callback={handleLabels}></LabelGroup>
           <svg ref={svgRef}>
             <defs>
               <clipPath id={hash}>

@@ -1,19 +1,35 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/labels.css";
 
-function LabelGroup({ type }) {
-    function handleState(event) {
-        const button = event.target;
-        button.style.backgroundColor = "gray";
+// TODO: use context? but data is too less. Need discussion.
+function Label({ index, data, callback }) {
+    const [state, setState] = useState(true);
+    const { raw, text, color } = data;
+
+    useEffect(() => callback(index, raw, state), [callback, index, state]);
+
+    return (
+        <div className="label">
+            <button onClick={() => setState(!state)} style={{ backgroundColor: state ? color : "gray" }} />
+            <p>{text}</p>
+        </div>
+    );
+}
+
+function LabelGroup({ type, callback }) {
+    const [data, setData] = useState([]);
+
+    function handleState(id, raw, value) {
+        let temp = data;
+        temp.splice(id, 1, { key: raw, state: value });
+        setData(temp);
+        callback(temp);
     }
 
     return(
         <div className="labels">
-            {type.map(({ text, color }, index) => (
-                <div className="label" key={index}>
-                  <button onClick={handleState} style={{backgroundColor: color}}/>
-                  <p>{text}</p>
-                </div>
+            {type.map((data, index) => (
+                <Label key={index} index={index} data={data} callback={handleState} />
             ))}
         </div>
     );

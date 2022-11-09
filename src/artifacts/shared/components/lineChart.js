@@ -30,7 +30,7 @@ function LineChart({
     options                              // option data
 }) {
     const { top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft } = margin;
-    const { x, y, type, /* xLabel, yLabel, xFormat, yFormat */ } = options;
+    const { x, y, type, xType, yType, /* xLabel, yLabel, xFormat, yFormat */ } = options;
     const [currentZoomState, setCurrentZoomState] = useState();
     const [typeList, setTypeList] = useState([]);
     const [linePath, setLinePath] = useState();
@@ -62,8 +62,8 @@ function LineChart({
             const safe = range(xSet.length).filter(i => typeDomain.has(typeSet[i]));
 
             /** Construct scales and axes */
-            const xScale = scaleTime(xDomain, [marginLeft, width - marginRight]);
-            const yScale = scaleLinear(yDomain, [height - marginBottom, marginTop]);
+            const xScale = typeof xType === "function" ? xType(xDomain, [marginLeft, width - marginRight]) : scaleTime(xDomain, [marginLeft, width - marginRight]);
+            const yScale = typeof yType === "function" ? yType(yDomain, [height - marginBottom, marginTop]) : scaleLinear(yDomain, [height - marginBottom, marginTop]);
             const xAxis = axisBottom(xScale);
             const yAxis = axisLeft(yScale);
             if (currentZoomState) xScale.domain(currentZoomState.rescaleX(xScale).domain());

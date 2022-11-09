@@ -1,0 +1,9 @@
+{
+  "name": "v4",
+  "version": "1.0.0",
+  "dependencies": {
+    "d3-array": "latest",
+    "d3-fetch": "latest",
+    "shared": "file:../shared"
+  }
+}

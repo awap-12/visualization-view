@@ -66,7 +66,11 @@ function Loader() {
                        options={{
                            x: value => new Date(value["time"]),
                            y: value => value["ppm"],
-                           type: value => value["type"]
+                           type: value => value["type"],
+                           axis: [
+                               { orient: "left" },
+                               { orient: "bottom" }
+                           ]
                        }}>
             </LineChart>
         ) : <h1>Loading...</h1>;

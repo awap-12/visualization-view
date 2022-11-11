@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { extent, map, ascending } from "d3-array"
 import { scaleLinear } from "d3-scale";
-import { ascending } from "d3-array"
 import { csv } from "d3-fetch";
 import { LineChart } from "shared";
 
 //region TODO: Move to React context and replace with correct api
-import vostok from "../fixtures/vostok.csv";
+import co2 from "../fixtures/carbon-dioxide.csv";
+import temperature from "../fixtures/antarctic-temperature.csv";
 
 /**
  * When handling import could use Promise.all([import])
@@ -16,7 +17,7 @@ import vostok from "../fixtures/vostok.csv";
  * ]).then([GlobalAnnual, ......] => { GlobalAnnual, ...... });
  *
  */
-const handlePath = () => ({ vostok });
+const handlePath = () => ({ co2, temperature });
 const handleData = data => data.sort((a, b) => ascending(a.year, b.year));
 
 //endregion
@@ -32,15 +33,16 @@ function Loader() {
                 jobs.push(csv(path, data => {
                     return {
                         type: key,
-                        // monthly contain yyyy-mm, yearly pickup middle yyyy-06
-                        year: +data["Mean"],
-                        ppm: +data["ppmv"],
+                        year: +data["Time (yr BP)"],
+                        ppm: +data["Carbon dioxide (ppm)"],
+                        temperature: +data["Antarctic temperature"]
                     }
                 }));
             });
             Promise.all(jobs).then(value => {
-                cache = value.reduce((pre, cur) => pre.concat(cur));
-                console.log(cache);
+                const [co2, temperature] = value;
+                for (let i = 0; i < Math.min(...value.map(group => group.length)); i++)
+                    cache[i] = { ...co2[i], temperature: temperature[i]["temperature"] };
                 setChartData(handleData(cache));
             });
         })();
@@ -51,13 +53,13 @@ function Loader() {
             <LineChart data={chartData}
                        color={type => {
                            switch (type) {
-                               case "vostok":           return "#0000ff";
+                               case "co2":              return "#0000ff";
                                default:                 return "#000000";
                            }
                        }}
                        tip={type => {
                            switch (type) {
-                               case "vostok":           return "Historical CO2 Record from the Vostok Ice Core";
+                               case "co2":              return "Antarctic Ice Cores Revised 800KYr CO2 Data";
                                default:                 throw new Error("Invalid data");
                            }
                        }}
@@ -69,7 +71,14 @@ function Loader() {
                            yType: scaleLinear,
                            axis: [
                                { orient: "left" },
-                               { orient: "bottom" }
+                               { orient: "bottom" },
+                               {
+                                   orient: "right",
+                                   scale: scaleLinear(extent(map(chartData, value => value["temperature"])), [570, 20]),
+                                   call: [
+                                       g => g.select(".domain").remove()
+                                   ]
+                               }
                            ]
                        }}>
             </LineChart>

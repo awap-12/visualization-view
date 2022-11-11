@@ -183,7 +183,7 @@ function LineChart({
             }));
 
             setTypeList(Array.from(typeDomain.keys()).map(item => ({
-                raw: item, text: tip(item),
+                raw: item, text: !!tip ? tip(item) : item,
                 color: typeof color === "function" ? color(item) : color
             })));
         }

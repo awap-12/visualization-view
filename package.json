@@ -19,6 +19,7 @@
     "v5": "file:src/artifacts/v5",
     "v6": "file:src/artifacts/v6",
     "v7": "file:src/artifacts/v7",
+    "v8": "file:src/artifacts/v8",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

@@ -114,7 +114,7 @@ function LineChart({
             const typeDomain = new InternSet(typeSet);
 
             /** Fetch tooltip */
-            const tooltip = !!tip ? map(data, (value => tip(type(value)))) : typeDomain;
+            const tooltip = !!tip ? map(data, (value => tip(type(value)))) : typeSet;
 
             /** Omit any data not present in the z-domain. */
             const safe = range(xSet.length).filter(i => typeDomain.has(typeSet[i]));
@@ -183,7 +183,7 @@ function LineChart({
             }));
 
             setTypeList(Array.from(typeDomain.keys()).map(item => ({
-                raw: item, text: tip(item),
+                raw: item, text: !!tip ? tip(item) : item,
                 color: typeof color === "function" ? color(item) : color
             })));
         }

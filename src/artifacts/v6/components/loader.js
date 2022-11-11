@@ -5,7 +5,7 @@ import { csv } from "d3-fetch";
 import { LineChart } from "shared";
 
 //region TODO: Move to React context and replace with correct api
-import vostok from "../fixtures/vostok.csv";
+import co2composite from "../fixtures/co2composite.csv";
 
 /**
  * When handling import could use Promise.all([import])
@@ -16,7 +16,7 @@ import vostok from "../fixtures/vostok.csv";
  * ]).then([GlobalAnnual, ......] => { GlobalAnnual, ...... });
  *
  */
-const handlePath = () => ({ vostok });
+const handlePath = () => ({ co2composite });
 const handleData = data => data.sort((a, b) => ascending(a.year, b.year));
 
 //endregion
@@ -30,11 +30,11 @@ function Loader() {
             // csv use fetch https://developer.mozilla.org/docs/Web/API/fetch
             Object.entries(handlePath()).forEach(([key, path]) => {
                 jobs.push(csv(path, data => {
+                    console.log(data)
                     return {
                         type: key,
-                        // monthly contain yyyy-mm, yearly pickup middle yyyy-06
-                        year: +data["Mean"],
-                        ppm: +data["ppmv"],
+                        year: +data["age_gas_calBP"],
+                        ppm: +data["co2_ppm"],
                     }
                 }));
             });
@@ -51,13 +51,13 @@ function Loader() {
             <LineChart data={chartData}
                        color={type => {
                            switch (type) {
-                               case "vostok":           return "#0000ff";
+                               case "co2composite":     return "#0000ff";
                                default:                 return "#000000";
                            }
                        }}
                        tip={type => {
                            switch (type) {
-                               case "vostok":           return "Historical CO2 Record from the Vostok Ice Core";
+                               case "co2composite":     return "Antarctic Ice Cores Revised 800KYr CO2 Data";
                                default:                 throw new Error("Invalid data");
                            }
                        }}

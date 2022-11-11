@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { scaleLinear } from "d3-scale";
 import { ascending } from "d3-array"
 import { csv } from "d3-fetch";
 import { LineChart } from "shared";
 
 //region TODO: Move to React context and replace with correct api
-import vostok from "../fixtures/vostok.csv";
+import co2 from "../fixtures/national-carbon-emissions.csv";
 
 /**
  * When handling import could use Promise.all([import])
@@ -16,31 +15,38 @@ import vostok from "../fixtures/vostok.csv";
  * ]).then([GlobalAnnual, ......] => { GlobalAnnual, ...... });
  *
  */
-const handlePath = () => ({ vostok });
+const handlePath = () => ({ co2 });
 const handleData = data => data.sort((a, b) => ascending(a.year, b.year));
 
 //endregion
 
 function Loader() {
     const [chartData, setChartData] = useState(null);
+    const [colorMap, setColorMap] = useState(null);
 
     useEffect(() => {
         let cache = [], jobs = [];
         void (async () => {
             // csv use fetch https://developer.mozilla.org/docs/Web/API/fetch
-            Object.entries(handlePath()).forEach(([key, path]) => {
+            Object.values(handlePath()).forEach(path => {
                 jobs.push(csv(path, data => {
-                    return {
-                        type: key,
-                        // monthly contain yyyy-mm, yearly pickup middle yyyy-06
-                        year: +data["Mean"],
-                        ppm: +data["ppmv"],
-                    }
+                    const [, ...keys] = Object.keys(data), result = [];
+                    keys.forEach(key  => {
+                        result.push({
+                            type: key,
+                            year: `${+data["Year"]}`,
+                            value: +data[key] * 3.664
+                        });
+                    });
+                    return result;
                 }));
             });
             Promise.all(jobs).then(value => {
-                cache = value.reduce((pre, cur) => pre.concat(cur));
+                cache = value.flat(2);
                 console.log(cache);
+                setColorMap(value[0][0].map((data, index) => ({
+                    type: data["type"], color: makeColor(index, value[0][0].length)
+                })).reduce((obj, item) => ({ ...obj, [item["type"]]: item["color"] }), {}));
                 setChartData(handleData(cache));
             });
         })();
@@ -50,23 +56,12 @@ function Loader() {
         (
             <LineChart data={chartData}
                        color={type => {
-                           switch (type) {
-                               case "vostok":           return "#0000ff";
-                               default:                 return "#000000";
-                           }
-                       }}
-                       tip={type => {
-                           switch (type) {
-                               case "vostok":           return "Historical CO2 Record from the Vostok Ice Core";
-                               default:                 throw new Error("Invalid data");
-                           }
+                           return `hsl(${colorMap[type]}, 100%, 50%)`;
                        }}
                        options={{
-                           x: value => value["year"],
-                           y: value => value["ppm"],
+                           x: value => new Date(value["year"]),
+                           y: value => value["value"],
                            type: value => value["type"],
-                           xType: scaleLinear,
-                           yType: scaleLinear,
                            axis: [
                                { orient: "left" },
                                { orient: "bottom" }
@@ -74,6 +69,12 @@ function Loader() {
                        }}>
             </LineChart>
         ) : <h1>Loading...</h1>;
+}
+
+function makeColor(colorNum, colors){
+    if (colors < 1) colors = 1;
+    // defaults to one color - avoid divide by zero
+    return colorNum * (360 / colors) % 360;
 }
 
 export default Loader;

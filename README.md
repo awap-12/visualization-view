@@ -8,6 +8,10 @@ Graphics library: https://d3js.org/
 * [v3 Atmospheric CO2 concentrations from Mauna Loa measurements starting](https://awap-12.github.io/client/#/artifact/v3)
 * [v4 Antarctic Ice Core records of atmospheric CO2 ratios combined with Mauna Loa measurements](https://awap-12.github.io/client/#/artifact/v4)
 * [v5 Vostok Ice Core CO2 measurements, 417160 - 2342 years](https://awap-12.github.io/client/#/artifact/v5)
+* [v6 Ice core 800k year composite study CO2 measurements](https://awap-12.github.io/client/#/artifact/v6)
+* [v7 Evolution of global temperature over the past two million years](https://awap-12.github.io/client/#/artifact/v7)
+* [v8 CO2 emissions by country](https://awap-12.github.io/client/#/artifact/v8)
+
 
 ## Available Scripts
 

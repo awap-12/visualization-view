@@ -66,7 +66,11 @@ function Loader() {
                            y: value => value["ppm"],
                            type: value => value["type"],
                            xType: scaleLinear,
-                           yType: scaleLinear
+                           yType: scaleLinear,
+                           axis: [
+                               { orient: "left" },
+                               { orient: "bottom" }
+                           ]
                        }}>
             </LineChart>
         ) : <h1>Loading...</h1>;

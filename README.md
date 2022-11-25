@@ -11,7 +11,7 @@ Graphics library: https://d3js.org/
 * [v6 Ice core 800k year composite study CO2 measurements](https://awap-12.github.io/client/#/artifact/v6)
 * [v7 Evolution of global temperature over the past two million years](https://awap-12.github.io/client/#/artifact/v7)
 * [v8 CO2 emissions by country](https://awap-12.github.io/client/#/artifact/v8)
-
+* [v9 CO2 emissions by sectors](https://awap-12.github.io/client/#/artifact/v9)
 
 ## Available Scripts
 

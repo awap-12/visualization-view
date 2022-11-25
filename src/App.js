@@ -7,6 +7,7 @@ import V5 from "v5";
 import V6 from "v6";
 import V7 from "v7";
 import V8 from "v8";
+import V9 from "v9";
 import { Route, Routes } from "react-router";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Route path="/artifact/v6" element={<V6 />} />
         <Route path="/artifact/v7" element={<V7 />} />
         <Route path="/artifact/v8" element={<V8 />} />
+        <Route path="/artifact/v9" element={<V9 />} />
         <Route path="*" element={<h1>Error</h1>} />
       </Routes>
     </div>

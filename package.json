@@ -1,17 +1,17 @@
 {
-  "name": "client",
+  "name": "visualization-view",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://awap-12.github.io/client",
+  "homepage": "https://awap-12.github.io/visualization-view",
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router": "^6.4.3",
-    "react-router-dom": "^6.4.3",
-    "react-scripts": "5.0.1",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router": "latest",
+    "react-router-dom": "latest",
+    "react-scripts": "latest",
     "v1": "file:src/artifacts/v1",
     "v2": "file:src/artifacts/v2",
     "v3": "file:src/artifacts/v3",
@@ -20,7 +20,8 @@
     "v6": "file:src/artifacts/v6",
     "v7": "file:src/artifacts/v7",
     "v8": "file:src/artifacts/v8",
-    "web-vitals": "^2.1.4"
+    "v9": "file:src/artifacts/v9",
+    "web-vitals": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

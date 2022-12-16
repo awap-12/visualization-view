@@ -1,8 +1,8 @@
 {
-  "name": "client",
+  "name": "visualization-view",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://awap-12.github.io/client",
+  "homepage": "https://awap-12.github.io/visualization-view",
   "dependencies": {
     "@testing-library/jest-dom": "latest",
     "@testing-library/react": "latest",

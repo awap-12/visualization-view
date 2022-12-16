@@ -3,15 +3,15 @@
 Graphics library: https://d3js.org/
 
 ### Debug:
-* [v1 Global historical surface temperature anomalies from January 1850 onwards](https://awap-12.github.io/client/#/artifact/v1)
-* [v2 Northern Hemisphere 2,000-year temperature reconstruction](https://awap-12.github.io/client/#/artifact/v2)
-* [v3 Atmospheric CO2 concentrations from Mauna Loa measurements starting](https://awap-12.github.io/client/#/artifact/v3)
-* [v4 Antarctic Ice Core records of atmospheric CO2 ratios combined with Mauna Loa measurements](https://awap-12.github.io/client/#/artifact/v4)
-* [v5 Vostok Ice Core CO2 measurements, 417160 - 2342 years](https://awap-12.github.io/client/#/artifact/v5)
-* [v6 Ice core 800k year composite study CO2 measurements](https://awap-12.github.io/client/#/artifact/v6)
-* [v7 Evolution of global temperature over the past two million years](https://awap-12.github.io/client/#/artifact/v7)
-* [v8 CO2 emissions by country](https://awap-12.github.io/client/#/artifact/v8)
-* [v9 CO2 emissions by sectors](https://awap-12.github.io/client/#/artifact/v9)
+* [v1 Global historical surface temperature anomalies from January 1850 onwards](https://awap-12.github.io/visualization-view/#/artifact/v1)
+* [v2 Northern Hemisphere 2,000-year temperature reconstruction](https://awap-12.github.io/visualization-view/#/artifact/v2)
+* [v3 Atmospheric CO2 concentrations from Mauna Loa measurements starting](https://awap-12.github.io/visualization-view/#/artifact/v3)
+* [v4 Antarctic Ice Core records of atmospheric CO2 ratios combined with Mauna Loa measurements](https://awap-12.github.io/visualization-view/#/artifact/v4)
+* [v5 Vostok Ice Core CO2 measurements, 417160 - 2342 years](https://awap-12.github.io/visualization-view/#/artifact/v5)
+* [v6 Ice core 800k year composite study CO2 measurements](https://awap-12.github.io/visualization-view/#/artifact/v6)
+* [v7 Evolution of global temperature over the past two million years](https://awap-12.github.io/visualization-view/#/artifact/v7)
+* [v8 CO2 emissions by country](https://awap-12.github.io/visualization-view/#/artifact/v8)
+* [v9 CO2 emissions by sectors](https://awap-12.github.io/visualization-view/#/artifact/v9)
 
 ## Available Scripts
 

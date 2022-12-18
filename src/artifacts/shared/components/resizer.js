@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function Resizer(ref) {
+function useResizer(ref) {
     const [dimensions, setDimensions] = useState(null);
 
     useEffect(() => {
@@ -17,4 +17,4 @@ function Resizer(ref) {
     return dimensions;
 }
 
-export default Resizer;
+export default useResizer;

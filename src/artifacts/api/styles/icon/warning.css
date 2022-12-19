@@ -1,0 +1,36 @@
+.alert-icon--warning {
+    border-color: #f8bb86;
+    animation: pulseWarning .75s infinite alternate;
+}
+
+.alert-icon--warning__body,
+.alert-icon--warning__dot {
+    position: absolute;
+    left: 50%;
+    background-color: #f8bb86;
+}
+
+.alert-icon--warning__body {
+    width: 5px;
+    height: 47px;
+    top: 10px;
+    border-radius: 2px;
+    margin-left: -2px;
+}
+
+.alert-icon--warning__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-left: -4px;
+    bottom: -11px;
+}
+
+@keyframes pulseWarning {
+    0% {
+        border-color: #f8d486;
+    }
+    to {
+        border-color: #f8bb86;
+    }
+}

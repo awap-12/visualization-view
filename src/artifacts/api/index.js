@@ -11,7 +11,7 @@ const TEST_URL = "https://unpkg.com/browse/react/";
 
 function API() {
     const [address, setAddress] = useState(TEST_URL);
-    const { success, warning } = useFallback();
+    const { toast } = useFallback();
     const { setUrl } = useFetch(TEST_URL, { method: "GET", mode: "cors" });
 
     return (
@@ -27,12 +27,12 @@ function API() {
             </Row>
             <Row style={{ marginTop: 10 }} className="justify-content-between">
               <Col sm className="text-center">
-                <Button variant="outline-success" onClick={() => success("Success")}>
+                <Button variant="outline-success" onClick={() => toast.success("Success")}>
                   Success
                 </Button>
               </Col>
               <Col sm className="text-center">
-                <Button variant="outline-warning" onClick={() => warning("Warning")}>
+                <Button variant="outline-warning" onClick={() => toast.warning("Warning")}>
                   Warning
                 </Button>
               </Col>

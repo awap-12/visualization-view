@@ -64,8 +64,7 @@ function useFetch(initialUrl, initialOptions) {
     }, [url, options]);
 
     useEffect(() => {
-        if (!!error)
-            warning(error);
+        if (!!error) warning(error);
     }, [error, warning]);
 
     return { setUrl, setOptions, data, error, loading };

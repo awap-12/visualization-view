@@ -26,7 +26,9 @@ async function handleResponse(response) {
     }
 }
 
-function useFetch(url, option) {
+function useFetch(initialUrl, initialOptions) {
+    const [url, setUrl] = useState(initialUrl);
+    const [options, setOptions] = useState(initialOptions);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
@@ -34,10 +36,11 @@ function useFetch(url, option) {
 
     useEffect(() => {
         setLoading(true);
+        setError(null);
 
         void async function() {
             try {
-                const response = await fetch(url, option)
+                const response = await fetch(url, options);
 
                 const { state, data } = await handleResponse(response);
 
@@ -58,14 +61,14 @@ function useFetch(url, option) {
 
             setLoading(false);
         }();
-    }, [url, option]);
+    }, [url, options]);
 
     useEffect(() => {
         if (!!error)
             warning(error);
     }, [error, warning]);
 
-    return { data, error, loading };
+    return { setUrl, setOptions, data, error, loading };
 }
 
 export default useFetch;

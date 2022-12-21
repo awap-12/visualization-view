@@ -1,12 +1,12 @@
 .alert-icon--error {
     border-color: #f27474;
-    animation: animateErrorIcon .5s;
+    animation: animate-error-icon .5s;
 }
 
 .alert-icon--error__x-mark {
     position: relative;
     display: block;
-    animation: animateXMark .5s;
+    animation: animate-x-mark .5s;
 }
 
 .alert-icon--error__line {
@@ -29,7 +29,7 @@
     right: 16px;
 }
 
-@keyframes animateErrorIcon {
+@keyframes animate-error-icon {
     0% {
         transform: rotateX(100deg);
         opacity: 0;
@@ -40,7 +40,7 @@
     }
 }
 
-@keyframes animateXMark {
+@keyframes animate-x-mark {
     0% {
         transform: scale(.4);
         margin-top: 26px;

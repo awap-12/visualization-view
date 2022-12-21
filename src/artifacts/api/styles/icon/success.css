@@ -19,7 +19,7 @@
     left: 30px;
     transform: rotate(-45deg);
     transform-origin: 0 60px;
-    animation: rotatePlaceholder 4.25s ease-in;
+    animation: rotate-placeholder 4.25s ease-in;
 }
 
 .alert-icon--success:before {
@@ -68,7 +68,7 @@
     left: 14px;
     top: 46px;
     transform: rotate(45deg);
-    animation: animateSuccessTip .75s;
+    animation: animate-success-tip .75s;
 }
 
 .alert-icon--success__line--long {
@@ -76,10 +76,10 @@
     right: 8px;
     top: 38px;
     transform: rotate(-45deg);
-    animation: animateSuccessLong .75s;
+    animation: animate-success-long .75s;
 }
 
-@keyframes rotatePlaceholder {
+@keyframes rotate-placeholder {
     0% {
         transform: rotate(-45deg);
     }
@@ -94,7 +94,7 @@
     }
 }
 
-@keyframes animateSuccessTip {
+@keyframes animate-success-tip {
     0% {
         width: 0;
         left: 1px;
@@ -122,7 +122,7 @@
     }
 }
 
-@keyframes animateSuccessLong {
+@keyframes animate-success-long {
     0% {
         width: 0;
         right: 46px;

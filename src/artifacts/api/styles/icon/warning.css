@@ -1,6 +1,6 @@
 .alert-icon--warning {
     border-color: #f8bb86;
-    animation: pulseWarning .75s infinite alternate;
+    animation: pulse-warning .75s infinite alternate;
 }
 
 .alert-icon--warning__body,
@@ -26,7 +26,7 @@
     bottom: -11px;
 }
 
-@keyframes pulseWarning {
+@keyframes pulse-warning {
     0% {
         border-color: #f8d486;
     }

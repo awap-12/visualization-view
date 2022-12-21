@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import useFallback from "./fallback";
+import { useAlertFallback } from "./alert";
 
 async function handleJsonResponse(response) {
     const json = await response.json();
@@ -32,7 +32,7 @@ function useFetch(initialUrl, initialOptions) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
-    const { warning } = useFallback();
+    const { warning } = useAlertFallback();
 
     useEffect(() => {
         setLoading(true);
@@ -56,7 +56,7 @@ function useFetch(initialUrl, initialOptions) {
                         break;
                 }
             } catch (err) {
-                setError(err.message);
+                setError(err?.message);
             }
 
             setLoading(false);
@@ -64,7 +64,7 @@ function useFetch(initialUrl, initialOptions) {
     }, [url, options]);
 
     useEffect(() => {
-        if (!!error) warning(error);
+        if (typeof error === "string") warning(error);
     }, [error, warning]);
 
     return { setUrl, setOptions, data, error, loading };

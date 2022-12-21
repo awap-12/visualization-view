@@ -9,14 +9,14 @@ import V7 from "v7";
 import V8 from "v8";
 import V9 from "v9";
 import { Route, Routes } from "react-router";
-import Api, { ApiProvider, Holder } from "api";
+import Api, { ApiProvider, InfoContextHolder } from "api";
 
 import "bootstrap/dist/css/bootstrap.css";
 
 function App() {
   return (
     <ApiProvider>
-      <Holder />
+      <InfoContextHolder />
       <div className="App">
         <Routes>
           <Route path="/artifact/api" element={<Api />} />

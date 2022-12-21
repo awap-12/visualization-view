@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "../styles/icon/error.css";
-import "../styles/icon/info.css";
-import "../styles/icon/warning.css";
-import "../styles/icon/success.css";
-import "../styles/icon.css";
+import "api/styles/icon/error.css";
+import "api/styles/icon/info.css";
+import "api/styles/icon/warning.css";
+import "api/styles/icon/success.css";
+import "api/styles/icon.css";
 
 const ICON_NAME = "alert-icon";
 

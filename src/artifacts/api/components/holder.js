@@ -1,68 +1,44 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
-import {Alert, Stack} from "react-bootstrap";
-import { ApiContext } from "./context";
-//import Icon from "./icon";
-import "../styles/holder/toast.css";
-import "../styles/holder.css";
+import React, { useContext, useEffect, useState } from "react";
+import { Col, Row, Stack } from "react-bootstrap";
+import { AlertContext, ToastAlert, ModalAlert } from "./alert";
 
-function ToastAlert({ id, timeout, type, message }) {
-    const { dispatch, options } = useContext(ApiContext);
-    const [show, setShow] = useState(true);
-    const timeoutTimer = useRef();
-    const deleteTimer = useRef();
+import "api/styles/holder/toast.css";
+import "api/styles/holder/modal.css";
+
+function InfoContextHolder() {
+    const [alertGrouped, setAlertGrouped] = useState({});
+    const { alerts } = useContext(AlertContext);
 
     useEffect(() => {
-        const timer = timeoutTimer.current;
+        setAlertGrouped(alerts.reduce((pre, cur) => {
+            (pre[cur.category] ??= []).push(cur);
+            return pre;
+        }, {}));
+    }, [alerts]);
 
-        let temp = !!options.timeouts && type in options.timeouts
-            ? options.timeouts[type]
-            : timeout;
-
-        if (typeof temp !== "undefined") {
-            window.clearTimeout(timer);
-            timeoutTimer.current = window.setTimeout(() => {
-                setShow(false);
-            }, +temp);
-        }
-
-        return () => window.clearTimeout(timer);
-    }, [options, type, timeout]);
-
-    useEffect(() => {
-        const timer = deleteTimer.current;
-        window.clearTimeout(timer);
-
-        if (show === false)
-            deleteTimer.current = window.setTimeout(() => {
-                dispatch({ type: "delete", payload: id });
-            }, 2000);
-
-        return () => window.clearTimeout(timer);
-    }, [show, dispatch, id])
-
+    // TODO: replace by Array.prototype.group or Array.prototype.groupToMap.
     return (
-        <Alert show={show} variant={type} dismissible={true} onClose={() => setShow(false)}>
-            {message}
-        </Alert>
+        <>
+          <div className="modal-alert-holder">
+              {alertGrouped["modal"]?.map((props, index) => !Boolean(index) ? (
+                  <ModalAlert key={props.id} {...props}>
+                      {props.message}
+                  </ModalAlert>
+              ) : null)}
+          </div>
+          <div className="toast-alert-holder">
+            <Stack className="col-md-5 mx-auto">
+                {alertGrouped["toast"]?.map(props => (
+                    <Row key={props.id}>
+                      <Col>
+                        <ToastAlert {...props} />
+                      </Col>
+                    </Row>
+                ))}
+            </Stack>
+          </div>
+        </>
     );
 }
 
-function ToastAlertHolder() {
-    const { alerts } = useContext(ApiContext);
-
-    return (
-        <div className="toast-alert-holder">
-          <Stack className="col-md-5 mx-auto">
-              {alerts.map(({ id, timeout, type, message }) => (
-                  <ToastAlert key={id} id={id} timeout={timeout} type={type} message={message}/>
-              ))}
-          </Stack>
-        </div>
-    );
-}
-
-function Holder() {
-    return <ToastAlertHolder />;
-}
-
-export default Holder;
+export default InfoContextHolder;

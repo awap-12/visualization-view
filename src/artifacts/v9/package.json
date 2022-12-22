@@ -8,7 +8,6 @@
     "d3-scale-chromatic": "latest",
     "d3-transition": "latest",
     "d3-hierarchy": "latest",
-    "d3-interpolate": "latest",
-    "shared": "file:../shared"
+    "d3-interpolate": "latest"
   }
 }

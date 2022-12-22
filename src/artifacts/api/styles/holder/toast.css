@@ -1,0 +1,27 @@
+.toast-alert-holder {
+    width: 100%;
+    height: 0;
+    top: 10px;
+    left: 0;
+    position: fixed;
+    z-index: 1200;
+}
+
+.toast-alert-holder .alert {
+    left: -10000px;
+    margin-top: -10000px;
+    user-select: none;
+    animation: toast-slide 0.2s forwards;
+    animation-timing-function: ease;
+    transition: margin-top 1.5s ease-in, opacity 2s linear;
+}
+
+.toast-alert-holder .alert.show {
+    margin-top: 0;
+}
+
+@keyframes toast-slide {
+    100% {
+        left: 0;
+    }
+}

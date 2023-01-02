@@ -2,28 +2,25 @@ import React, { useEffect, useRef, useState } from "react";
 import { select } from "d3-selection";
 
 //const context = document.createElement("canvas").getContext("2d");
-const FORCE_WRAP = 350;
+const FORCE_WRAP = 350, MIN_OFFSET = -(2 ** 32);
 
-function Tooltip(props) {
-    const [visibility, setVisibility] = useState(false);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+/**
+ * @param {number} x The x of tooltip position
+ * @param {number} y The y of tooltip position
+ * @param {boolean} visible The visibility of tooltip
+ * @param {[string]} content The contents to display
+ * @return {JSX.Element}
+ */
+function Tooltip({ x = MIN_OFFSET, y = MIN_OFFSET, visible = false, content } = {}) {
     const [rect, setRect] = useState({ width: 0, height: 0});
     const textsRef = useRef(null);
 
     useEffect(() => {
-        setVisibility(props.visible);
-    }, [props.visible]);
-
-    useEffect(() => {
-        setPosition(props.position);
-    }, [props.position]);
-
-    useEffect(() => {
         const container = select(textsRef.current);
         container.text(null);
-        if (props.content?.length > 0) {
+        if (content?.length > 0) {
             let width = 0, height = 0, temp = 0;
-            for (const text of props.content) {
+            for (const text of content) {
                 const element = container.append("text");
                 let words = text.split(/\s+/).reverse(), word, line = [], lineNumber = 0;
                 let tspan = element.append("tspan").attr("dy", 0);
@@ -48,13 +45,24 @@ function Tooltip(props) {
             }
         }
         setRect(textsRef.current.getBoundingClientRect());
-    }, [props.content]);
+    }, [content]);
 
     return(
-        <g visibility={visibility ? "visible" : "hidden"} transform={`translate(${position.x}, ${position.y})`} style={{fontSize: "small"}}>
-            <circle r={2.5} fill="black" />
-            <rect x={(rect.width + 10) / -2} width={rect.width + 10} y={6} height={rect.height} rx={3} fill="rgba(0, 0, 0, 0.60)" />
-            <g ref={textsRef} transform={`translate(${0}, ${20})`} fill="white" textAnchor="middle" />
+        <g visibility={visible ? "visible" : "hidden"}
+           transform={`translate(${x}, ${y})`}
+           style={{ fontSize: "small" }}>
+          <circle r={2.5}
+                  fill="black" />
+          <rect x={(rect.width + 10) / -2}
+                y={6}
+                width={rect.width + 10}
+                height={rect.height}
+                rx={3}
+                fill="rgba(0, 0, 0, 0.60)" />
+          <g ref={textsRef}
+             transform={`translate(${0}, ${20})`}
+             fill="white"
+             textAnchor="middle" />
         </g>
     );
 }

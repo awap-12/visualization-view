@@ -5,7 +5,12 @@ import React, { createContext, useReducer } from "react";
  * - global setup for timeouts dataset
  * @type {{alerts: *[], options: {}}}
  */
-const initialState = { options: {}, alerts: [] };
+const initialState = {
+    options: {
+        timeouts: 1500
+    },
+    alerts: []
+};
 
 function reducer(state, { type, payload }) {
     switch (type) {

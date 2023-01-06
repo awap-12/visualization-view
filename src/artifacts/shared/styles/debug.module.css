@@ -1,0 +1,47 @@
+.column {
+    --violet-rgb: 112.520718,44.062154,249.437846;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    background-color: rgba(var(--violet-rgb), 0.15);
+    border: 1px solid rgba(var(--violet-rgb), 0.3);
+}
+
+.container {
+    padding: 1.2rem;
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 3rem;
+    margin-bottom: 1rem;
+}
+
+.header h1 {
+    background: linear-gradient(45deg, #db92ff, #7cd1f9);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.body {
+    padding: 1.5rem;
+    text-align: center
+}
+
+.link {
+    color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase !important;
+    text-decoration: none;
+    padding: .5rem 1rem;
+}
+
+.icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    padding-right: .5rem;
+}

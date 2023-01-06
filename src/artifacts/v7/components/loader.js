@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { extent, map, ascending } from "d3-array"
 import { scaleLinear } from "d3-scale";
 import { csv } from "d3-fetch";
-import { LineChart } from "shared";
+import { LineChart } from "graphic";
 
 //region TODO: Move to React context and replace with correct api
 import co2 from "../fixtures/carbon-dioxide.csv";

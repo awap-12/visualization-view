@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAlertFallback } from "./alert";
+import { useAlertFallback } from "shared";
 
 async function handleJsonResponse(response) {
     const json = await response.json();

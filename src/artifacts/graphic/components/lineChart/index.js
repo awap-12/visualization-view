@@ -29,6 +29,8 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
     const [typeDesc, setTypeDesc] = useState(null);
     const [lineDesc, setLineDesc] = useState(null);
     const [axisDesc, setAxisDesc] = useState(null);
+    const tooltipRenderLock = useRef({ onExecute: false });
+    const tooltipRef = useRef(null);
     const contentRef = useRef(null);
     const chartRef = useRef(null);
     const svgRef = useRef(null);
@@ -111,31 +113,45 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
     }, [dataDesc, typeDesc, lineDesc, stroke.mixBlendMode, source, defined]);
 
     function pointerEntered() {
-        setTooltipDesc({ ...tooltipDesc, visible: true });
+        if (tooltipRenderLock.current.onExecute) {
+            setTooltipDesc({ ...tooltipDesc, visible: true });
+        }
     }
 
     function pointerMoved(event) {
-        const [{ dataSet: xSet, scale: xScale }, { dataSet: ySet, scale: yScale }] = dataDesc;
-        const [{ display: displaySet, labelMap }] = lineDesc;
-        const [{ dataSet: typeSet }] = typeDesc;
-        const [xm, ym] = pointer(event);
-        const i = least(range(xSet.length).filter(i => displaySet.has(typeSet[i])),
+        if (!tooltipRenderLock.current.onExecute) {
+            tooltipRenderLock.current = {
+                onExecute: true,
+                timer: setTimeout(() => tooltipRenderLock.current = { onExecute: false }, 100)
+            };
+
+            const [{ dataSet: xSet, scale: xScale }, { dataSet: ySet, scale: yScale }] = dataDesc;
+            const [{ display: displaySet, labelMap }] = lineDesc;
+            const [{ dataSet: typeSet }] = typeDesc;
+            const [xm, ym] = pointer(event);
+            const i = least(range(xSet.length).filter(i => displaySet.has(typeSet[i])),
                 i => Math.hypot(xScale(xSet[i]) - xm, yScale(ySet[i]) - ym)); // closest point
 
-        setTooltipDesc({
-            ...tooltipDesc,
-            visible: true,
-            position: { x: xScale(xSet[i]), y: yScale(ySet[i]) },
-            content: [`type: ${labelMap[typeSet[i]]}`, `year: ${xSet[i]}`, `data: ${ySet[i]}`]
-        });
+            const point = svgRef.current.createSVGPoint();
+            [point.x, point.y] = [xScale(xSet[i]), yScale(ySet[i])];
+
+            setTooltipDesc({
+                ...tooltipDesc,
+                visible: true,
+                position: point.matrixTransform(svgRef.current.getScreenCTM()),
+                content: [`type: ${labelMap[typeSet[i]]}`, `year: ${xSet[i]}`, `data: ${ySet[i]}`]
+            });
+        }
     }
 
     function pointerLeft() {
+        tooltipRenderLock.current = { onExecute: false };
         setTooltipDesc({ ...tooltipDesc, visible: false });
     }
 
     return(
-        <div ref={chartRef} style={{ width, height, marginBottom: "2rem" }}>
+        <div ref={chartRef}
+             style={{ width, height, marginBottom: "2rem" }}>
           <LabelGroup typeConfig={(typeDesc ?? [])[0]?.config}
                       callback={useCallback(data => {
                           const [{ config: typeConfig }] = typeDesc;
@@ -147,6 +163,10 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
                               colorMap: typeConfig.reduce((pre, { key, color }) => ({ ...pre, [key]: color }), {})
                           }]);
                       }, [typeDesc])} />
+          <Tooltip ref={tooltipRef}
+                   position={tooltipDesc?.position}
+                   visible={tooltipDesc?.visible}
+                   content={tooltipDesc?.content} />
           <svg ref={svgRef}
                width={width}
                height={height}
@@ -170,11 +190,9 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
                strokeWidth={stroke.strokeWidth}
                strokeOpacity={stroke.strokeOpacity}
                fill="none" />
-            {axisDesc?.map((props, index) => (<Axis key={`axis-${index}`} {...props} />))}
-            <Tooltip x={tooltipDesc?.position?.x}
-                     y={tooltipDesc?.position?.y}
-                     visible={tooltipDesc?.visible}
-                     content={tooltipDesc?.content} />
+            {axisDesc?.map((props, index) =>
+                <Axis key={`axis-${index}`} {...props} />
+            )}
           </svg>
         </div>
     );

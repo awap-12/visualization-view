@@ -1,0 +1,22 @@
+/** reference https://github.com/t4t5/sweetalert */
+
+.icon {
+    width: 80px;
+    height: 80px;
+    border-width: 4px;
+    border-style: solid;
+    border-radius: 50%;
+    padding: 0;
+    position: relative;
+    box-sizing: content-box;
+    margin: 20px auto;
+}
+
+.icon:first-child {
+    margin-top: 32px;
+}
+
+.icon img {
+    max-width: 100%;
+    max-height: 100%;
+}

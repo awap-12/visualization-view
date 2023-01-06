@@ -23,7 +23,7 @@ const initialState = {
         "line": {
             width: 960,
             height: 600,
-            margin: { top: 20, right: 80, bottom: 60, left: 80 },
+            margin: { top: 20, right: 30, bottom: 30, left: 40 },
             color: "currentColor",
             stroke: {
                 linecap: "round",

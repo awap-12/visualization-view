@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import "../../styles/labels.css";
+
+import styles from "graphic/styles/labels.module.css";
 
 // TODO: use context? but data is too less. Need discussion.
 function Label({ id, data, onClick }) {
@@ -11,10 +12,10 @@ function Label({ id, data, onClick }) {
     }, [onClick, id, key, state]);
 
     return (
-        <div className="label">
-            <button style={{ backgroundColor: state ? color : "gray" }}
-                    onClick={() => setState(!state)} />
-            <p>{label}</p>
+        <div className={styles.label}>
+          <button style={{ backgroundColor: state ? color : "gray" }}
+                  onClick={() => setState(!state)} />
+          <p>{label}</p>
         </div>
     );
 }
@@ -29,7 +30,7 @@ function LabelGroup({ typeConfig, callback }) {
     }, [data, callback]);
 
     return(
-        <div className="labels">
+        <div className={styles.labels}>
             {typeConfig?.map((data, id) =>
                 <Label key={`label-${id}`} id={id} data={data} onClick={handleState} />
             )}

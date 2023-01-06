@@ -52,9 +52,9 @@ function useGraphicCallback() {
                 width = 960,
                 height = 600,
                 marginTop = 20,
-                marginRight = 80,
-                marginBottom = 60,
-                marginLeft = 80,
+                marginRight = 30,
+                marginBottom = 30,
+                marginLeft = 40,
                 margin = {
                     top: marginTop,
                     right: marginRight,

@@ -34,26 +34,25 @@ function Debug() {
             <div className={styles.sideBarBackground} />
             <div className={styles.sideBarContent}>
               <ul className={styles.sideBarList}>
-                  {debugLinkGroup?.map((module, index) =>
-                      !!module
-                          ? <li key={index} className={styles.sideBarItem}>{module}</li>
-                          : null)}
+                {debugLinkGroup?.map((module, index) =>
+                    !!module
+                        ? <li key={index} className={styles.sideBarItem}>{module}</li>
+                        : null)}
               </ul>
             </div>
           </aside>
           <div className={styles.content}>
             <Routes>
-                {debugRouteGroup?.map((route, index) =>
-                    !!route
-                        ? route(index)
-                        : null)}
+              {debugRouteGroup?.map((route, index) =>
+                  !!route
+                      ? route(index)
+                      : null)}
             </Routes>
           </div>
-          <button className={styles.toggle}
-                  onClick={() => setSideBarShow(!sidebarShow)}>
-              {sidebarShow
-                  ? <FaChevronLeft size={15} fill="white" />
-                  : <FaListUl size={15} fill="white" />}
+          <button className={styles.toggle} onClick={() => setSideBarShow(!sidebarShow)}>
+            {sidebarShow
+                ? <FaChevronLeft size={15} fill="white" />
+                : <FaListUl size={15} fill="white" />}
           </button>
         </main>
     );

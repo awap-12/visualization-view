@@ -129,11 +129,13 @@ function Renderer({
         setBuffers(buffer);
     }, [shaders, vertexShader, fragmentShader, dimensions, texture, initHalfFloatRGBATexture]);
 
-    return <canvas ref={canvasRef}
-                   style={{ ...moreStyle }}
-                   width={size?.width ?? 0}
-                   height={size?.height ?? 0}
-                    onLoad={() => console.log("22222")}/>;
+    return (
+        <canvas ref={canvasRef}
+                style={{ ...moreStyle }}
+                width={size?.width ?? 0}
+                height={size?.height ?? 0}
+                onLoad={() => console.log("22222")} />
+    );
 }
 
 export default Renderer;

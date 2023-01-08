@@ -32,7 +32,7 @@ const Container = forwardRef(function Container({ children, component: Component
                        maxWidth: maxWidth
                    }}
                    {...addition}>
-            {children}
+          {children}
         </Component>
     );
 });

@@ -20,21 +20,19 @@ function InfoContextHolder() {
     return (
         <>
           <div className={modalStyles.holder}>
-              {alertGrouped["modal"]?.map((props, index) => !Boolean(index) ? (
-                  <ModalAlert key={props.id} {...props}>
-                      {props.message}
-                  </ModalAlert>
-              ) : null)}
+            {alertGrouped["modal"]?.map((props, index) => !Boolean(index)
+                ? <ModalAlert key={props.id} {...props}>{props.message}</ModalAlert>
+                : null)}
           </div>
           <div className={toastStyles.holder}>
             <Stack className="col-md-5 mx-auto">
-                {alertGrouped["toast"]?.map(props => (
-                    <Row key={props.id}>
-                      <Col>
-                        <ToastAlert {...props} />
-                      </Col>
-                    </Row>
-                ))}
+              {alertGrouped["toast"]?.map(props => (
+                  <Row key={props.id}>
+                    <Col>
+                      <ToastAlert {...props} />
+                    </Col>
+                  </Row>
+              ))}
             </Stack>
           </div>
         </>

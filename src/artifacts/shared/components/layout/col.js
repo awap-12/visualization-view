@@ -70,7 +70,7 @@ const Col = forwardRef(function Col({ children, component: Component = "div", st
                    }}
                    style={styleSheet}
                    {...addition}>
-            {children}
+          {children}
         </Component>
     );
 });

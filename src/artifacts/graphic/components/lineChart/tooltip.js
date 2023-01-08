@@ -31,7 +31,7 @@ const Tooltip = forwardRef(function Tooltip({ position = null, visible = false, 
                  top: `${position?.y ?? MIN_OFFSET}px`
              }}>
           <div className={styles.content}>
-              {content?.map((text, key) => <p key={key}>{text}</p>)}
+            {content?.map((text, key) => <p key={key}>{text}</p>)}
           </div>
         </div>
     );

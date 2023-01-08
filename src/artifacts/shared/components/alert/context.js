@@ -30,7 +30,7 @@ function AlertProvider({ children, options = {} }) {
 
     return (
         <AlertContext.Provider value={{ ...state, dispatch }}>
-            {children}
+          {children}
         </AlertContext.Provider>
     );
 }

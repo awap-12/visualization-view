@@ -6,7 +6,7 @@ function ApiProvider({ children }) {
         <BreakpointProvider>
           <GraphicProvider>
             <AlertProvider>
-                {children}
+              {children}
             </AlertProvider>
           </GraphicProvider>
         </BreakpointProvider>

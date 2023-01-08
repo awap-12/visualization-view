@@ -31,9 +31,9 @@ function LabelGroup({ typeConfig, callback }) {
 
     return(
         <div className={styles.labels}>
-            {typeConfig?.map((data, id) =>
-                <Label key={`label-${id}`} id={id} data={data} onClick={handleState} />
-            )}
+          {typeConfig?.map((data, id) =>
+              <Label key={`label-${id}`} id={id} data={data} onClick={handleState} />
+          )}
         </div>
     );
 }

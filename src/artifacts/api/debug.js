@@ -15,7 +15,7 @@ export const Api = {
     ),
     route: key => (
         <Route key={key} path="/api" element={
-            <div></div>
+          <div></div>
         } />
     )
 };

@@ -178,11 +178,11 @@ function DoughnutChart({
 
     return (
         <svg ref={svgRef}>
-            <g className="container">
-                <g className="path" />
-                <g className="label" pointerEvents="none" textAnchor="middle" />
-                <circle className="parent" />
-            </g>
+          <g className="container">
+            <g className="path" />
+            <g className="label" pointerEvents="none" textAnchor="middle" />
+            <circle className="parent" />
+          </g>
         </svg>
     );
 }

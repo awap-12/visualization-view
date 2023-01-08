@@ -90,7 +90,6 @@ function Graphic() {
     const { line, doughnut } = useGraphicCallback();
 
     useEffect(() => {
-
         async function fetchData(type, jobs = []) {
             // csv use fetch https://developer.mozilla.org/docs/Web/API/fetch
             Object.entries(handlePath(type)).forEach(([key, path]) => {
@@ -173,7 +172,7 @@ function Graphic() {
 
                       })
                   }}>
-                      Update Line Emitter
+                    Update Line Emitter
                   </Button>
                 </Col>
               </Row>
@@ -184,7 +183,7 @@ function Graphic() {
                           source: doughnutChartData
                       });
                   }}>
-                      Doughnut Trigger
+                    Doughnut Trigger
                   </Button>
                 </Col>
               </Row>

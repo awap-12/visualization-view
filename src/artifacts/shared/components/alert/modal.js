@@ -60,25 +60,26 @@ function ModalAlert({
         if (closeOnClickOutside) setShow(false);
     }
 
-    return !!show ?
-        <Overlay show={!hideOverlay} onClick={onClickOutside} onKeyDown={onKeyDown}>
-          <Row justify="center">
-            <Col>
-              <Icon type={type} />
-            </Col>
-          </Row>
-          <Row justify="center" className={styles.header}>
-            <Col>
-              <h2>{title}</h2>
-            </Col>
-          </Row>
-          <Row justify="center" className={styles.content}>
-            <Col>
+    return !!show
+        ? <Overlay show={!hideOverlay} onClick={onClickOutside} onKeyDown={onKeyDown}>
+            <Row justify="center">
+              <Col>
+                <Icon type={type} />
+              </Col>
+            </Row>
+            <Row justify="center" className={styles.header}>
+              <Col>
+                <h2>{title}</h2>
+              </Col>
+            </Row>
+            <Row justify="center" className={styles.content}>
+              <Col>
                 {children}
-            </Col>
-          </Row>
-          <Row justify="center" className={styles.footer}>
-              {Object.entries({ ...{
+              </Col>
+            </Row>
+            <Row justify="center" className={styles.footer}>
+              {Object.entries({
+                  ...{
                       cancel: {
                           text: "Cancel",
                           visible: false,
@@ -89,16 +90,19 @@ function ModalAlert({
                           visible: true,
                           onClick: () => setShow(false)
                       }
-                  }, ...buttons }).map(([type, { text, visible, ...other }]) => (
-                  !!visible ?
-                      <Col key={type}>
-                        <Button {...other} variant="primary">
+                  }, ...buttons
+              }).map(([type, { text, visible, ...other }]) =>
+                  !!visible
+                      ? <Col key={type}>
+                          <Button {...other} variant="primary">
                             {text}
-                        </Button>
-                      </Col> : null
-              ))}
-          </Row>
-        </Overlay> : null;
+                          </Button>
+                        </Col>
+                      : null
+              )}
+            </Row>
+          </Overlay>
+        : null;
 }
 
 export default ModalAlert;

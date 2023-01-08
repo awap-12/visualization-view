@@ -85,7 +85,7 @@ function GraphicProvider({ children, options = {} }) {
 
     return (
         <GraphicContext.Provider value={{ ...state, dispatch }}>
-            {children}
+          {children}
         </GraphicContext.Provider>
     );
 }

@@ -51,13 +51,13 @@ function Axis({ scale, orient, offset, title, calls }) {
     return (
         <g ref={axisRef}
            transform={!!contentMatrix ? `translate(${contentMatrix.x},${contentMatrix.y})` : null}>
-            {!!titleMatrix ? (
-                <text textAnchor={titleMatrix.anchor}
+          {!!titleMatrix
+              ? <text textAnchor={titleMatrix.anchor}
                       transform={`translate(${titleMatrix.x},${titleMatrix.y}) rotate(${titleMatrix.r})`}
                       fill="black">
-                    {titleMatrix.text}
+                  {titleMatrix.text}
                 </text>
-            ) : null}
+              : null}
         </g>
     );
 }

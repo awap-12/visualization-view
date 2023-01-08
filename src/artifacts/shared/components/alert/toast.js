@@ -37,7 +37,7 @@ function ToastAlert({ id, timeout, type, message }) {
 
     return (
         <Alert show={show} variant={type} dismissible={true} onClose={() => setShow(false)}>
-            {message}
+          {message}
         </Alert>
     );
 }

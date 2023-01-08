@@ -53,8 +53,7 @@ export function Tooltip({ position = {}, visible = false, content } = {}) {
         <g visibility={visible ? "visible" : "hidden"}
            transform={`translate(${x}, ${y})`}
            style={{ fontSize: "small" }}>
-          <circle r={2.5}
-                  fill="black" />
+          <circle r={2.5} fill="black" />
           <g transform={`translate(0, ${20})`}>
             <rect x={rect.width * MARGIN_SCALE.width / -2}
                   y={20 * 1.2 / -2}

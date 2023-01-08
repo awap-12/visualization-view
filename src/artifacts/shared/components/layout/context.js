@@ -86,9 +86,9 @@ function BreakpointProvider({ children, wrapped = false, options, fallback }) {
 
     return (
         <BreakpointContext.Provider value={{ breakpoint, config, greaterThan, lessThan }}>
-            {wrapped
-                ? <div ref={breakpointRef}>{children}</div>
-                : children}
+          {wrapped
+              ? <div ref={breakpointRef}>{children}</div>
+              : children}
         </BreakpointContext.Provider>
     );
 }

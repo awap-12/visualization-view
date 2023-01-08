@@ -117,7 +117,7 @@ const Button = forwardRef(function Button({ children, component: Component = "bu
                        }
                    }, [onClick, disabled])}
                    {...addition}>
-            {children}
+          {children}
         </Component>
     );
 });

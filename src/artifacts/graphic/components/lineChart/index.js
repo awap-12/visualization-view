@@ -3,7 +3,7 @@ import { extent, group, InternSet, least, map, range } from "d3-array";
 import { curveLinear, line as Line } from "d3-shape";
 import { pointer, select } from "d3-selection";
 import { zoom } from "d3-zoom";
-import useResizer from "../resizer";
+import { useResizer } from "shared";
 import LabelGroup from "./label";
 import Axis from "./axis";
 import Tooltip from "./tooltip";
@@ -14,12 +14,12 @@ import Tooltip from "./tooltip";
  * @param {number} width The outer width of line chart, in pixels
  * @param {number} height The outer height of line chart, in pixels
  * @param {{top:number,right:number,bottom:number,left:number}} margin The margin of line chart, in pixels
- * @param {[object]} axes The logics for handling axis
+ * @param {LineOptions} stroke The stroke settings
  * @param {[object]} source The data source. e.g. {type, x, y}[]
+ * @param {function} defined The gap of data display
  * @param {[[function,function,[number,number],[{orient:string,offset:number,title?:object,calls?:[function]}]]]} dataDescHandler A wrapper for [Data analyzer, Type of scalar, Range of data type in chart, Axes data]
  * @param {[[func:function,config?:function]]} typeDescHandler A wrapper for [Type analyzer, Type info formatting callback]
  * @param {object} options
- * @param {function} options.defined The callback for handling gaps in data
  * @return {JSX.Element}
  */
 function LineChart({ id, width, height, margin, stroke, source, defined, dataDescHandler, typeDescHandler, ...options } = {}) {
@@ -37,10 +37,10 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
     const dimensions = useResizer(chartRef);
 
     useEffect(() => {
-        const { width: posX, height: posY } = dimensions || chartRef.current.getBoundingClientRect();
+        const { width, height } = dimensions || chartRef.current.getBoundingClientRect();
         select(svgRef.current).call(zoom()
             .scaleExtent([0.9, 50])
-            .translateExtent([[0, 0], [posX, posY]])
+            .translateExtent([[0, 0], [width, height]])
             .on("zoom", event => {
                 setCurrentZoomState(event.transform);
             }));
@@ -151,7 +151,11 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
 
     return(
         <div ref={chartRef}
-             style={{ width, height, marginBottom: "2rem" }}>
+             className={{...options.className}}
+             style={{
+                 marginBottom: "2rem",
+                 ...options.style
+             }}>
           <LabelGroup typeConfig={(typeDesc ?? [])[0]?.config}
                       callback={useCallback(data => {
                           const [{ config: typeConfig }] = typeDesc;
@@ -185,10 +189,10 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
             </defs>
             <g ref={contentRef}
                clipPath={`url(#${id})`}
-               strokeLinecap={stroke.strokeLinecap}
-               strokeLinejoin={stroke.strokeLinejoin}
-               strokeWidth={stroke.strokeWidth}
-               strokeOpacity={stroke.strokeOpacity}
+               strokeLinecap={stroke.linecap}
+               strokeLinejoin={stroke.linejoin}
+               strokeWidth={stroke.width}
+               strokeOpacity={stroke.opacity}
                fill="none" />
             {axisDesc?.map((props, index) =>
                 <Axis key={`axis-${index}`} {...props} />

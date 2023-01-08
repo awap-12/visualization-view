@@ -7,8 +7,16 @@ export {
 } from "./components/alert";
 
 export {
-    default as Button
+    Button
 } from "./components/button";
+
+export {
+    Renderer
+} from "./components/canvas"
+
+export {
+    default as useResizer
+} from "./components/resizer"
 
 export {
     BreakpointProvider,

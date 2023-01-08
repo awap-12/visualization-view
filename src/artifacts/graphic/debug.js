@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Route } from "react-router";
 import { Link } from "react-router-dom";
 import { IoBarChart  } from "react-icons/io5";
@@ -84,8 +84,8 @@ function extracted(data, max, depth) {
 }
 
 function Graphic() {
-    const [lineChartData, setLineChartData] = useState(null);
     const [doughnutChartData, setDoughnutChartData] = useState(null);
+    const [lineChartData, setLineChartData] = useState(null);
     const { charts } = useContext(GraphicContext);
     const { line, doughnut } = useGraphicCallback();
 
@@ -164,9 +164,20 @@ function Graphic() {
                           }
                       });
                   }}>
-                      Line Trigger
+                      Create Line Emitter
                   </Button>
                 </Col>
+                <Col>
+                  <Button onClick={() =>{
+                      line("put",{
+
+                      })
+                  }}>
+                      Update Line Emitter
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
                 <Col>
                   <Button onClick={() => {
                       doughnut("post", {
@@ -184,21 +195,21 @@ function Graphic() {
               switch (type) {
                   case "line":
                       return (
-                          <>
+                          <Fragment key={index}>
                             <div className={sharedStyles.container}>
                               <LineChart key={`line-chart-${index}`} {...props} />
                             </div>
                             <br />
-                          </>
+                          </Fragment>
                       );
                   case "doughnut":
                       return (
-                          <>
+                          <Fragment key={index}>
                             <div className={sharedStyles.container}>
                               <DoughnutChart key={`doughnut-chart-${index}`} {...props} />
                             </div>
                             <br />
-                          </>
+                          </Fragment>
                       );
                   default:
                       return null;

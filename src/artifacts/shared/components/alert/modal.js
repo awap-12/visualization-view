@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Container, Row, Col } from "../layout";
-import { Button } from "react-bootstrap";
+import { Button } from "../button";
 import { AlertContext } from "./context";
 
 import styles from "shared/styles/alert/modal.module.css";

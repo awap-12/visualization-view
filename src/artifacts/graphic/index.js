@@ -8,10 +8,6 @@ export {
 } from "./components/callback";
 
 export {
-    default as useResizer
-} from "./components/resizer";
-
-export {
     default as LineChart
 } from "./components/lineChart";
 

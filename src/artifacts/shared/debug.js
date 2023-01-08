@@ -1,10 +1,9 @@
 import { Route } from "react-router";
 import { Link } from "react-router-dom";
-import { MdSpaceDashboard, MdNotificationsActive  } from "react-icons/md";
-import { Button, Container, Col, Row, useAlertFallback } from ".";
+import { MdBurstMode, MdRadioButtonChecked, MdSpaceDashboard, MdNotificationsActive } from "react-icons/md";
+import { Button, Container, Col, Row, Renderer, useAlertFallback } from ".";
 
 import styles from "./styles/debug.module.css";
-import React from "react";
 
 const DEBUG_ROOT = "/artifact/debug";
 
@@ -12,47 +11,61 @@ function Alert() {
   const { success, warning } = useAlertFallback();
 
   return (
-      <Container>
-        <Row>
-          <Col md={6}>
-            <Button variant="outline-success" onClick={() => success("Nice! it is a success message")}>
-              Toast Success
-            </Button>
-          </Col>
-          <Col md={6}>
-            <Button variant="outline-warning" onClick={() => warning("Op... it is a warning message")}>
-              Toast Warning
-            </Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            <Button variant="outline-success" onClick={() => success("Nice! it is a success message", { category: "modal" })}>
-              Modal Success
-            </Button>
-          </Col>
-          <Col md={6}>
-            <Button variant="outline-warning" onClick={() => warning("Op... it is a warning message", { category: "modal" })}>
-              Modal Warning
-            </Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            <Button variant="outline-success" onClick={() => success("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis enim eros, sit amet ultrices sapien fermentum ut. Praesent rutrum accumsan augue feugiat scelerisque. Curabitur imperdiet blandit nisl id mollis. Suspendisse nec convallis sem, eget dictum orci. Suspendisse rutrum metus nisi, eu ultrices odio pretium a. Aenean sit amet est ut tortor viverra suscipit. Nullam ex diam, rutrum id semper ac, ullamcorper at diam. Donec vel arcu nisi. Mauris faucibus magna ac nulla ornare gravida. Nulla facilisi. Morbi at nulla et mi tincidunt ultricies. Suspendisse consequat sit amet arcu ac egestas. In posuere tellus sit amet imperdiet bibendum. Maecenas vestibulum dapibus hendrerit. In hac habitasse platea dictumst. Nulla sed mi rutrum, feugiat nulla non, lacinia diam.\n" +
-                "\n" +
-                "Etiam malesuada non dui et dapibus. Pellentesque volutpat velit a dapibus sollicitudin. Phasellus aliquet dui ac lectus fermentum vehicula. Quisque aliquet quis tortor eget feugiat. Fusce a nunc nisl. Curabitur bibendum nisl scelerisque urna luctus aliquet. Quisque dui lectus, feugiat nec turpis id, semper feugiat libero. Vestibulum non massa diam. Donec hendrerit a mauris sed venenatis.\n" +
-                "\n" +
-                "Ut congue placerat magna id pellentesque. Duis ornare ut elit quis consectetur. Donec quis convallis neque. Aliquam quis ante vel dolor dignissim consectetur. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse at massa placerat, ultricies eros sed, tincidunt dui. Proin luctus suscipit nunc ultricies consectetur. Curabitur rhoncus eu risus pellentesque tincidunt. Aliquam neque elit, mollis tristique semper eget, mattis sollicitudin elit. Maecenas sed risus felis. Quisque id ante in ipsum dictum aliquam. Mauris ipsum dui, ultricies in blandit ac, gravida ac ex.\n" +
-                "\n" +
-                "Donec egestas, sem et dapibus placerat, justo diam rhoncus odio, ac tristique lacus nibh in odio. Vestibulum posuere, tellus at ultrices viverra, sapien odio sollicitudin mauris, eget elementum orci nunc sed magna. Etiam luctus ex nec ligula pulvinar egestas. Sed pharetra porta eros vel efficitur. Nulla tristique cursus ligula, quis consectetur velit. Ut commodo, massa et malesuada porta, sem est hendrerit est, ac tincidunt odio nisl in tellus. Donec nulla diam, ullamcorper id dictum hendrerit, ultrices nec nulla.\n" +
-                "\n" +
-                "Curabitur malesuada ipsum ex, quis tempor est feugiat finibus. Praesent mollis lorem nec augue luctus, et porta nibh tincidunt. Praesent convallis, purus sed tincidunt ullamcorper, nunc velit pretium ex, quis finibus risus nibh non sapien. Aliquam suscipit ante ut sagittis iaculis. Nunc lacinia quis sem vitae laoreet. Vestibulum scelerisque lacus eget massa cursus, a hendrerit lectus auctor. Pellentesque dictum ante posuere metus aliquam hendrerit. Ut efficitur condimentum turpis eget tincidunt.", { category: "modal" })}>
-              Long Text
-            </Button>
-          </Col>
-        </Row>
-      </Container>
+      <>
+        <div className={styles.container}>
+          <Container>
+            <Row>
+              <Col md={6}>
+                <Button onClick={() => success("Nice! it is a success message")}>
+                  Toast Success
+                </Button>
+              </Col>
+              <Col md={6}>
+                <Button onClick={() => warning("Op... it is a warning message")}>
+                  Toast Warning
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+        <br />
+        <div className={styles.container}>
+          <Container>
+            <Row>
+              <Col md={6}>
+                <Button onClick={() => success("Nice! it is a success message", { category: "modal" })}>
+                  Modal Success
+                </Button>
+              </Col>
+              <Col md={6}>
+                <Button onClick={() => warning("Op... it is a warning message", { category: "modal" })}>
+                  Modal Warning
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+        <br />
+        <div className={styles.container}>
+          <Container>
+            <Row>
+              <Col>
+                <Button onClick={() => success("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis enim eros, sit amet ultrices sapien fermentum ut. Praesent rutrum accumsan augue feugiat scelerisque. Curabitur imperdiet blandit nisl id mollis. Suspendisse nec convallis sem, eget dictum orci. Suspendisse rutrum metus nisi, eu ultrices odio pretium a. Aenean sit amet est ut tortor viverra suscipit. Nullam ex diam, rutrum id semper ac, ullamcorper at diam. Donec vel arcu nisi. Mauris faucibus magna ac nulla ornare gravida. Nulla facilisi. Morbi at nulla et mi tincidunt ultricies. Suspendisse consequat sit amet arcu ac egestas. In posuere tellus sit amet imperdiet bibendum. Maecenas vestibulum dapibus hendrerit. In hac habitasse platea dictumst. Nulla sed mi rutrum, feugiat nulla non, lacinia diam.\n" +
+                    "\n" +
+                    "Etiam malesuada non dui et dapibus. Pellentesque volutpat velit a dapibus sollicitudin. Phasellus aliquet dui ac lectus fermentum vehicula. Quisque aliquet quis tortor eget feugiat. Fusce a nunc nisl. Curabitur bibendum nisl scelerisque urna luctus aliquet. Quisque dui lectus, feugiat nec turpis id, semper feugiat libero. Vestibulum non massa diam. Donec hendrerit a mauris sed venenatis.\n" +
+                    "\n" +
+                    "Ut congue placerat magna id pellentesque. Duis ornare ut elit quis consectetur. Donec quis convallis neque. Aliquam quis ante vel dolor dignissim consectetur. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse at massa placerat, ultricies eros sed, tincidunt dui. Proin luctus suscipit nunc ultricies consectetur. Curabitur rhoncus eu risus pellentesque tincidunt. Aliquam neque elit, mollis tristique semper eget, mattis sollicitudin elit. Maecenas sed risus felis. Quisque id ante in ipsum dictum aliquam. Mauris ipsum dui, ultricies in blandit ac, gravida ac ex.\n" +
+                    "\n" +
+                    "Donec egestas, sem et dapibus placerat, justo diam rhoncus odio, ac tristique lacus nibh in odio. Vestibulum posuere, tellus at ultrices viverra, sapien odio sollicitudin mauris, eget elementum orci nunc sed magna. Etiam luctus ex nec ligula pulvinar egestas. Sed pharetra porta eros vel efficitur. Nulla tristique cursus ligula, quis consectetur velit. Ut commodo, massa et malesuada porta, sem est hendrerit est, ac tincidunt odio nisl in tellus. Donec nulla diam, ullamcorper id dictum hendrerit, ultrices nec nulla.\n" +
+                    "\n" +
+                    "Curabitur malesuada ipsum ex, quis tempor est feugiat finibus. Praesent mollis lorem nec augue luctus, et porta nibh tincidunt. Praesent convallis, purus sed tincidunt ullamcorper, nunc velit pretium ex, quis finibus risus nibh non sapien. Aliquam suscipit ante ut sagittis iaculis. Nunc lacinia quis sem vitae laoreet. Vestibulum scelerisque lacus eget massa cursus, a hendrerit lectus auctor. Pellentesque dictum ante posuere metus aliquam hendrerit. Ut efficitur condimentum turpis eget tincidunt.", { category: "modal" })}>
+                  Long Text
+                </Button>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </>
   )
 }
 
@@ -71,6 +84,72 @@ export const alert = {
             </div>
             <div className={styles.body}>
               <Alert />
+            </div>
+          </>
+        } />
+    )
+};
+
+export const canvas = {
+    link: (
+        <Link className={styles.link} to={`${DEBUG_ROOT}/canvas`}>
+          <MdBurstMode className={styles.icon} />
+          <span>Canvas</span>
+        </Link>
+    ),
+    route: key => (
+        <Route key={key} path="/canvas" element={
+          <>
+            <div className={styles.header}>
+              <h1>Alert</h1>
+            </div>
+            <div className={styles.body}>
+              <div className={styles.container}>
+                <Renderer shaders={{
+                              image : {
+                                  uniforms: {
+                                    iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
+                                    iTime:       (gl, loc, ctx) => gl.uniform1f(loc, performance.now() / 1000),
+                                    iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.iChannel0)
+                                  }
+                              }
+                          }}
+                          // onLoad={useCallback(ctx => {
+                          //
+                          // }, [])}
+                          style={{
+                              width: "100%",
+                              height: "60vh",
+                              minHeight: "300px"
+                          }} />
+              </div>
+            </div>
+          </>
+        } />
+    )
+}
+
+export const button = {
+    link: (
+        <Link className={styles.link} to={`${DEBUG_ROOT}/button`}>
+          <MdRadioButtonChecked className={styles.icon} />
+          <span>Button</span>
+        </Link>
+    ),
+    route: key => (
+        <Route key={key} path={"/button"} element={
+          <>
+            <div className={styles.header}>
+              <h1>Button</h1>
+            </div>
+            <div className={styles.body}>
+              <div className={styles.container}>
+                <Button>Default</Button>
+              </div>
+              <br />
+              <div className={styles.container}>
+                <Button outline>Default</Button>
+              </div>
             </div>
           </>
         } />

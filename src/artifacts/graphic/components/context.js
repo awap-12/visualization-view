@@ -9,6 +9,15 @@ import React, { createContext, useReducer } from "react";
  */
 
 /**
+ * @typedef {object} LineOptions
+ * @property {string} linecap
+ * @property {string} linejoin
+ * @property {number} width
+ * @property {number} opacity
+ * @property {string} mixBlendMode
+ */
+
+/**
  * @typedef {object} ChartsOptions
  * @property {{width:number,height:number,margin:{top:number,right:number,bottom:number,left:number}}&LineOptions} line
  * @property {{width:number,height:number}} doughnut

@@ -1,8 +1,62 @@
-import React, {useCallback, useEffect, useLayoutEffect, useRef, useState} from "react";
-import { GlHandle, Renderer as ShaderRenderer } from "../utils/webgl";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import { GlHandle } from "../utils/webgl";
 import useResizer from "../resizer";
 
-function parseRenderData(shaders, vertexShader, fragmentShader, glHandle, context) {
+const defaultVertexShader = `
+    attribute vec2 V;
+
+    void main() {
+        gl_Position = vec4(V, 0, 1);
+    }
+`;
+
+const defaultVertexShader300 = `#version 300 es
+    in vec2 V;
+
+    void main(){
+        gl_Position = vec4(V, 0, 1);
+    }
+`;
+
+const defaultFragmentShader = `
+    precision highp float;
+
+    void main() {
+        gl_FragColor = vec4(1, 0, 1, 1);
+    }
+`;
+
+const defaultFragmentShader300 = `#version 300 es
+    precision highp float;
+
+    out vec4 fragColor;
+
+    void main() {
+        fragColor = vec4(1, 0, 1, 1);
+    }
+`;
+
+class ShaderRenderer {
+    constructor(glHandle, context, program, uniforms) {
+        this.program = program;
+        const gl = glHandle.gl;
+        this.fillUniforms = () => {
+            for (const uniform of uniforms)
+                uniform.setter(gl, uniform.location, context);
+        }
+        this.draw = () => {
+            glHandle.drawQuad(program.vertexAttributeLocation);
+            glHandle.unbindTextures();
+        }
+    }
+
+    render() {
+        this.program.draw(this.fillUniforms, this.draw);
+    }
+}
+
+
+function parseRenderData(shaders, vertexShaders, fragmentShaders, glHandle, context) {
     const imageShaderIndex = Object.keys(shaders).length - 1;
     const rendererList = [], bufferList = {};
 
@@ -10,7 +64,10 @@ function parseRenderData(shaders, vertexShader, fragmentShader, glHandle, contex
 
     function initProgram(id) {
         try {
-            return glHandle.initProgram(id, vertexShader, fragmentShader);
+            return glHandle.initProgram(id,
+                vertexShaders[id] ?? vertexShaders,
+                fragmentShaders[id] ?? fragmentShaders
+            );
         } catch (err) { console.log(err.message) }
     }
 
@@ -24,7 +81,7 @@ function parseRenderData(shaders, vertexShader, fragmentShader, glHandle, contex
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             });
             bufferList[shader] = glHandle.createDoubleBuffer(() => {
-                textureInitializer(glHandle.gl, context);
+                textureInitializer(glHandle.gl, { ...context, buffers: bufferList });
             });
         }
         const program = glHandle.wrapProgram(shader, initProgram(shader), "V", bufferList[shader]);
@@ -38,7 +95,7 @@ function parseRenderData(shaders, vertexShader, fragmentShader, glHandle, contex
         if (extraUniforms.length !== 0)
             console.warn(`Extra uniforms configured for shader "${shader}", which are not present in the shader code - might have been removed by GLSL compiler if not used: ${extraUniforms.join(", ")}`);
         const uniforms = program.uniformSpecs.map(spec => ({ location: spec.location, setter: uniformSetters[spec.name] }));
-        rendererList.push(new ShaderRenderer(glHandle, context, program, uniforms));
+        rendererList.push(new ShaderRenderer(glHandle, { ...context, buffers: bufferList }, program, uniforms));
     }
 
     return [rendererList, bufferList];
@@ -46,43 +103,25 @@ function parseRenderData(shaders, vertexShader, fragmentShader, glHandle, contex
 
 function Renderer({
     shaders,
-    vertexShader = `
-        attribute vec2 V;
-        void main() {
-            gl_Position = vec4(V, 0, 1);
-        }
-    `,
-    fragmentShader = `
-        precision highp float;
-        void main() {
-            gl_FragColor = vec4(1, 0, 0, 1);
-        }
-    `,
+    version = 300,
+    vertexShaders = version > 100 ? defaultVertexShader300 : defaultVertexShader,
+    fragmentShaders = version > 100 ? defaultFragmentShader300 : defaultFragmentShader,
     onLoad,
     style: moreStyle = {}
 } = {}) {
     const [renderers, setRenderers] = useState(null);
     const [glHandle, setGlHandle] = useState(null);
-    const [buffers, setBuffers] = useState(null);
     const [size, setSize] = useState(null);
     const animateRef = useRef(null);
     const canvasRef = useRef();
     const dimensions = useResizer(canvasRef);
-
-    const texture = useCallback((loc, tex) => {
-        glHandle.bindTexture(loc, tex);
-    }, [glHandle]);
-
-    const initHalfFloatRGBATexture = useCallback((width, height) => {
-        glHandle.texImage2DHalfFloatRGBA(width ?? size.height, height ?? size.height);
-    }, [glHandle, size]);
 
     const animate = useCallback(() => {
         if (!!renderers)
             for (const renderer of renderers)
                 renderer.render();
 
-        console.log("rendering...", renderers);
+        console.log("rendering....");
 
         animateRef.current = requestAnimationFrame(animate);
     }, [renderers]);
@@ -107,34 +146,52 @@ function Renderer({
     }, [glHandle, renderers, size]);
 
     useEffect(() => {
-        const { width, height } = dimensions || canvasRef.current.getBoundingClientRect();
-        setSize({ width, height });
+        let currentWidth = size?.width, currentHeight = size?.height, currentGlHandle = glHandle;
 
-        const currentGlHandle = new GlHandle(canvasRef.current, {
-            antialias: false,
-            depth: false,
-            alpha: false
-        });
+        if (!currentWidth || !currentHeight) {
+            const { width, height } = dimensions || canvasRef.current.getBoundingClientRect();
+            setSize({ width, height });
+        }
 
-        const [renderer, buffer] = parseRenderData(shaders, vertexShader, fragmentShader, currentGlHandle, {
-            gl: currentGlHandle.gl,
-            width: width,
-            height: height,
-            texture,
-            initHalfFloatRGBATexture,
-        });
+        if (!currentGlHandle) {
+            currentGlHandle = new GlHandle(canvasRef.current, {
+                antialias: false,
+                depth: false,
+                alpha: false
+            });
+            setGlHandle(currentGlHandle);
+        }
 
-        setGlHandle(currentGlHandle);
-        setRenderers(renderer);
-        setBuffers(buffer);
-    }, [shaders, vertexShader, fragmentShader, dimensions, texture, initHalfFloatRGBATexture]);
+        if (!!currentWidth && !!currentHeight && !!currentGlHandle) {
+            const [renderer, buffers] = parseRenderData(shaders, vertexShaders, fragmentShaders, currentGlHandle, {
+                gl: currentGlHandle.gl,
+                width: currentWidth,
+                height: currentHeight,
+                texture: (loc, tex) => {
+                    currentGlHandle.bindTexture(loc, tex);
+                },
+                initHalfFloatRGBATexture: (width = currentWidth, height = currentHeight) => {
+                    currentGlHandle.texImage2DHalfFloatRGBA(width, height);
+                },
+            });
+
+            setRenderers(renderer);
+
+            if (!!onLoad)
+                onLoad({
+                    gl: currentGlHandle.gl,
+                    width: currentWidth,
+                    height: currentHeight,
+                    buffers: buffers,
+                });
+        }
+    }, [shaders, vertexShaders, fragmentShaders, onLoad, dimensions, glHandle, size]);
 
     return (
         <canvas ref={canvasRef}
                 style={{ ...moreStyle }}
                 width={size?.width ?? 0}
-                height={size?.height ?? 0}
-                onLoad={() => console.log("22222")} />
+                height={size?.height ?? 0} />
     );
 }
 

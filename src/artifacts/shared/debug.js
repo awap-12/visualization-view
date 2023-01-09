@@ -5,6 +5,9 @@ import { Button, Container, Col, Row, Renderer, useAlertFallback } from ".";
 
 import styles from "./styles/debug.module.css";
 
+import * as uniform from "./fixtures/uniform/index.js";
+import * as multipass from "./fixtures/multipass/index.js";
+
 const DEBUG_ROOT = "/artifact/debug";
 
 function Alert() {
@@ -109,17 +112,52 @@ export const canvas = {
               <div className={styles.container}>
                 <Renderer
                     shaders={{
-                        image : {
+                        image: {
                             uniforms: {
                                 iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
                                 iTime:       (gl, loc, ctx) => gl.uniform1f(loc, performance.now() / 1000),
-                                iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.iChannel0)
+                                iMouse:      (gl, loc, ctx) => gl.uniform2f(loc, 0, 0)
                             }
                         }
                     }}
-                    // onLoad={useCallback(ctx => {
-                    //
-                    // }, [])}
+                    fragmentShaders={{
+                        image: uniform.image
+                    }}
+                    style={{
+                        width: "100%",
+                        height: "60vh",
+                        minHeight: "300px"
+                    }} />
+              </div>
+              <br />
+              <div className={styles.container}>
+                <Renderer
+                    shaders={{
+                        buffer: {
+                            uniforms: {
+                                iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
+                                iTime:       (gl, loc, ctx) => gl.uniform1f(loc, performance.now() / 1000),
+                                iMouse:      (gl, loc, ctx) => gl.uniform2f(loc, 0, 0),
+                                iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.buffers.buffer)
+                            },
+                            texture: (gl, ctx) => {
+                                ctx.initHalfFloatRGBATexture();
+                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+                            }
+                        },
+                        image: {
+                            uniforms: {
+                                iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.buffers.buffer)
+                            }
+                        }
+                    }}
+                    fragmentShaders={{
+                        buffer: multipass.buffer,
+                        image: multipass.image
+                    }}
                     style={{
                         width: "100%",
                         height: "60vh",

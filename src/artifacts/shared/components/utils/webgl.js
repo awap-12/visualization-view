@@ -35,18 +35,41 @@ class WebGl2Strategy extends WebGlStrategy {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, width, height, 0, gl.RGBA, gl.HALF_FLOAT, null);
     }
 }
+/**
+ * @param {string} str
+ * @param {number} targetLength
+ * @return {string} padded string
+ */
+function padLineNumber(str, targetLength) {
+    return str.length >= targetLength
+        ? str
+        : " ".repeat(targetLength - str.length) + str;
+}
+
+/**
+ * @param {string} source
+ * @return {string} line numbered source
+ */
+function getLineNumberedSource(source) {
+    const lines = source.split(/\r?\n/);
+    const maxDigits = lines.length.toString().length;
+    const buffer = [];
+    lines.forEach((line, index) => {
+        const lineNumber = padLineNumber((index + 1).toString(), maxDigits);
+        buffer.push(lineNumber + ": " + line + "\n");
+    });
+    return buffer.join('');
+}
 
 export class GlHandle {
     constructor(canvas, contextAttrs) {
         this.canvas = canvas;
-        let gl = canvas.getContext("webgl2", contextAttrs);
-        if (!!gl) {
-            this.strategy = new WebGl2Strategy(gl);
-        } else if (!!(gl = canvas.getContext("webgl", contextAttrs))) {
-            this.strategy = new WebGl1Strategy(gl);
+        if (!!(this.gl = canvas.getContext("webgl2", contextAttrs))) {
+            this.strategy = new WebGl2Strategy(this.gl);
+        } else if (!!(this.gl = canvas.getContext("webgl", contextAttrs))) {
+            this.strategy = new WebGl1Strategy(this.gl);
         } else throw new Error("Invalid webgl context");
-        this.gl = gl;
-        const positionBuffer = gl.createBuffer();
+        const gl = this.gl, positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(QUAD_POSITIONS), gl.STATIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -61,8 +84,10 @@ export class GlHandle {
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            const info = String(gl.getShaderInfoLog(shader));
             gl.deleteShader(shader);
-            console.error("Cannot compile shader - " + id + ": " + String(gl.getShaderInfoLog(shader)));
+            console.log("Cannot compile shader - " + id + ": " + info);
+            console.log(getLineNumberedSource(source));
         }
         return shader;
     }
@@ -194,25 +219,5 @@ export class DoubleBuffer {
         this.deleteTextures();
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.deleteFramebuffer(this.fbo)
-    }
-}
-
-export class Renderer {
-    constructor(glHandle, context, program, uniforms) {
-        this.program = program;
-        const gl = glHandle.gl;
-        this.fillUniforms = () => {
-            for (const uniform of uniforms) {
-                uniform.setter(gl, uniform.location, context);
-            }
-        }
-        this.draw = () => {
-            glHandle.drawQuad(program.vertexAttributeLocation);
-            glHandle.unbindTextures();
-        }
-    }
-
-    render() {
-        this.program.draw(this.fillUniforms, this.draw);
     }
 }

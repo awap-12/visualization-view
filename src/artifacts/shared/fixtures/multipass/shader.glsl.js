@@ -1,24 +1,5 @@
-const shader = `#version 300 es
-
-precision highp float;
-
-uniform vec2 iResolution;
-uniform float iTime;
-uniform vec2  iMouse;
-uniform sampler2D iChannel0;
-
-out vec4 fragColor;
-
+const constant = `
 #define NOHIT 1e10
-#define PATH_LENGTH 10
-#define MAX_DIST 1e10
-
-//alternate scene
-#define CYLINDERS
-//
-// Hash functions by Nimitz:
-// https://www.shadertoy.com/view/Xt3cDn
-//
 
 struct its
 {
@@ -53,7 +34,7 @@ otherwise use second span
 
 span Inter(span a, span b) {
     bvec4 cp = bvec4(a.n.t < b.n.t, a.n.t < b.f.t, a.f.t < b.n.t, a.f.t < b.f.t);
-    if (b.n.t == NOHIT || a.n.t == NOHIT) return span(NO_its, NO_its, false);
+    if      (b.n.t == NOHIT || a.n.t == NOHIT) return span(NO_its, NO_its, false);
     else if (cp.x && cp.z) return span(NO_its, NO_its, false);
     else if (cp.x && !cp.z && cp.w)  return span(b.n, a.f, false);
     else if (cp.x && !cp.z && !cp.w) return b;
@@ -64,7 +45,7 @@ span Inter(span a, span b) {
 
 span Sub(span a, span b) {
     bvec4 cp = bvec4(a.n.t < b.n.t, a.n.t < b.f.t, a.f.t < b.n.t, a.f.t < b.f.t);
-    if (a.n.t == NOHIT) return span(NO_its, NO_its, false);
+    if      (a.n.t == NOHIT) return span(NO_its, NO_its, false);
     else if (b.n.t == NOHIT) return a;
     else if (cp.x && cp.z) return a;
     else if (cp.x && !cp.z && cp.w)  return span(a.n, b.n, false);
@@ -79,7 +60,7 @@ span Sub(span a, span b) {
 span Union(span a, span b) {
     bvec4 cp = bvec4(a.n.t < b.n.t, a.n.t < b.f.t, a.f.t < b.n.t, a.f.t < b.f.t);
 
-    if (b.n.t == NOHIT) return a;
+    if      (b.n.t == NOHIT) return a;
     else if (a.n.t == NOHIT) return b;
     else if (cp.z && a.f.t > 0.) return span(a.n, a.f, true);
     else if (cp.z && a.f.t < 0.) return b;
@@ -156,7 +137,27 @@ span iCylinder(in vec3 ro, in vec3 rd, in vec3 ca, float cr) {
     its iF = its(t.y, nF);
     return span(iN, iF, false);
 }
+`
 
+const shader = `#version 300 es
+
+precision highp float;
+
+uniform vec2 iResolution;
+uniform float iTime;
+uniform int iFrame;
+uniform vec2  iMouse;
+uniform sampler2D iChannel0;
+
+out vec4 fragColor;
+
+${constant}
+
+#define PATH_LENGTH 10
+#define MAX_DIST 1e10
+
+//alternate scene
+//#define CYLINDERS
 
 uint baseHash(uvec2 p) {
     p = 1103515245U * ((p >> 1U) ^ (p.yx));
@@ -245,8 +246,7 @@ vec3 opU(vec3 d, span s, inout vec3 normal, float mat) {
 vec3 worldhit(in vec3 ro, in vec3 rd, in vec2 dist, out vec3 normal) {
     vec3 d = vec3(dist, 0.);
 
-    span s = iPlane(ro, rd, - vec3(0, 1.1, 0), 1.);
-    d = opU(d, s, normal, 1.);
+    d = opU(d, iPlane(ro, rd, - vec3(0, 1.1, 0), 1.), normal, 1.);
 
     span s2, s3, s4;
     float mat = 3.,
@@ -433,13 +433,22 @@ mat3 setCamera(in vec3 ro, in vec3 ta, float cr) {
 }
 
 void main() {
+    bool reset = iFrame == 0;
+
     vec2 mo = iMouse.xy == vec2(0) ? vec2(.125) : abs(iMouse.xy) / iResolution.xy - .5;
 
     vec4 data = texelFetch(iChannel0, ivec2(0), 0);
 
-    vec3 ro = vec3(+ 2. * cos(1.5 + 6. * mo.x), 1. + 2. * mo.y, + 2. * sin(1.5 + 6. * mo.x));
+    if (round(mo * iResolution.xy) != round(data.yz) || round(data.w) != round(iResolution.x)) {
+        reset = true;
+    }
+
+    // camera
     vec3 ta = vec3(0., 0., 0.);
+    vec3 ro = ta + vec3(2. * cos(1.5 + 6. * mo.x), 1. + 2. * mo.y, + 2. * +sin(1.5 + 6. * mo.x));
+    // camera-to-world transformation
     mat3 ca = setCamera(ro, ta, 0.);
+
     vec3 normal;
 
     float fpd = data.x;
@@ -448,7 +457,7 @@ void main() {
         float nfpd = worldhit(ro, normalize(vec3(.0, 0.4, 0) - ro), vec2(0, 100), normal).y;
         fragColor = vec4(nfpd, mo * iResolution.xy, iResolution.x);
     } else {
-        vec2 p = (- iResolution.xy + 2. * gl_FragCoord.xy - 1.) / iResolution.y;
+        vec2 p = (-iResolution.xy + 2. * gl_FragCoord.xy - 1.) / iResolution.y;
         float seed = float(baseHash(floatBitsToUint(p - iTime))) / float(0xffffffffU);
 
         // AA
@@ -462,7 +471,11 @@ void main() {
 
         vec3 col = render(ro, rd, seed);
 
-        fragColor = vec4(col, 1) + texelFetch(iChannel0, ivec2(gl_FragCoord.xy), 0);
+        if (reset) {
+           fragColor = vec4(col, 1);
+        } else {
+           fragColor = vec4(col, 1) + texelFetch(iChannel0, ivec2(gl_FragCoord.xy), 0);
+        }
     }
 }
 `;

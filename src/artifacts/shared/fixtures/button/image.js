@@ -3,6 +3,7 @@ const image = `
 precision highp float;
 
 uniform vec2 iResolution;
+uniform float iHue;
 
 vec3 rgb2hsl(vec3 color) {
     vec3 hsl; // init to 0 to avoid warnings ? (and reverse if + remove first part)
@@ -13,12 +14,10 @@ vec3 rgb2hsl(vec3 color) {
 
     hsl.z = (fmax + fmin) / 2.0; // Luminance
 
-    if (delta == 0.0) //This is a gray, no chroma...
-    {
+    if (delta == 0.0) {
         hsl.x = 0.0; // Hue
         hsl.y = 0.0; // Saturation
-    } else //Chromatic data...
-    {
+    } else {
         if (hsl.z < 0.5)
             hsl.y = delta / (fmax + fmin); // Saturation
         else
@@ -48,15 +47,9 @@ void main() {
     vec2 uv = gl_FragCoord.xy / iResolution.xy;
 
     // vec3 col = rgb2hsl(vec3(uv, 1.0));
-    vec3 col = vec3(uv, 1.0);
+    vec3 col = vec3(uv, 0.0);
 
-    if (uv.y < 0.25) {
-        col.r = col.g = col.b = 0.0;
-    } else if (uv.y > 0.75) {
-        col.r = col.g = col.b = 1.0;
-    } else {
-        col.r = uv.x *  8.0 * (pow((uv.y - 0.5), 2.0)) + 0.28;
-    }
+    col.r = col.g = col.b = col.r * ((8.0 * (pow((uv.y - 0.5), 2.0)) + 0.28 < col.r) ? 1.0 : 0.0);
 
     gl_FragColor = vec4(col, 1.0);
 }

@@ -8,15 +8,25 @@ uniform vec2  iMouse;
 
 out vec4 fragColor;
 
+float sdCylinder(vec3 p, vec2 h) {
+    vec2 d = abs(vec2(length(p.xz), p.y)) - h;
+    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
+}
+
 float sdBox(vec3 p, vec3 b) {
     vec3 d = abs(p) - b;
     return min(max(d.x, max(d.y, d.z)), 0.0) + length(max(d, 0.0));
 }
 
+vec2 opU(vec2 d1, vec2 d2) {
+    return (d1.x < d2.x) ? d1 : d2;
+}
+
 vec2 map(in vec3 pos) {
     vec2 res = vec2(pos.y, 0.0);
 
-    res = vec2(sdBox(pos, vec3(0.2, 1, 0.2)), 29.0);
+    res = opU(res, vec2(sdCylinder(pos - vec3(0.5, 0.25, 0.), vec2(0.15, 0.25)), 35.0));
+    res = opU(res, vec2(sdBox(pos - vec3(-0.5, 0.25, 0.), vec3(0.3, 0.25, 0.1)), 29.0));
 
     return res;
 }
@@ -199,20 +209,19 @@ vec3 render(in vec3 ro, in vec3 rd, in vec3 rdx, in vec3 rdy) {
 }
 
 mat3 setCamera(in vec3 ro, in vec3 ta, float cr) {
-    vec3 cw = normalize(ta-ro);
-    vec3 cp = vec3(sin(cr), cos(cr),0.0);
-    vec3 cu = normalize(cross(cw,cp));
-    vec3 cv =          (cross(cu,cw));
+    vec3 cw = normalize(ta - ro);
+    vec3 cp = vec3(sin(cr), cos(cr), 0.0);
+    vec3 cu = normalize(cross(cw, cp));
+    vec3 cv =          (cross(cu, cw));
     return mat3(cu, cv, cw);
 }
 
 void main() {
-    vec2 mo = iMouse.xy / iResolution.xy;
     float time = 32.0 + iTime * 1.5;
 
     // camera
-    vec3 ta = vec3(0.25, -0.75, -0.75);
-    vec3 ro = ta + vec3(4.5 * cos(0.1 * time + 7.0 * mo.x), 2.2, 4.5 * sin(0.1 * time + 7.0 * mo.x));
+    vec3 ta = vec3(0., 0., 0.);
+    vec3 ro = ta + vec3(2.5 * cos(0.1 * time), 2., 2.5 * sin(0.1 * time));
     // camera-to-world transformation
     mat3 ca = setCamera(ro, ta, 0.0);
 
@@ -234,7 +243,7 @@ void main() {
     vec3 col = render(ro, rd, rdx, rdy);
 
     // gain
-    // col = col*3.0/(2.5+col);
+    col = col * 3.0 / (2.5 + col);
 
     // gamma
     col = pow(col, vec3(0.4545));

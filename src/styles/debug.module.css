@@ -1,5 +1,12 @@
 :root {
-    --sidebar-width: 20%
+    --sidebar-width: 20%;
+    --sidebar-min-width: 185px;
+    --sidebar-max-width: 220px;
+    --sidebar-range: clamp(
+            var(--sidebar-min-width),
+            var(--sidebar-width),
+            var(--sidebar-max-width)
+    );
 }
 
 .app {
@@ -15,9 +22,11 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    left: calc(var(--sidebar-width) * -1);
+    left: calc(var(--sidebar-range) * -1);
     z-index: 5;
     width: var(--sidebar-width);
+    max-width: var(--sidebar-max-width);
+    min-width: var(--sidebar-min-width);
     font-weight: 200;
     color: #fff;
     background-position: 50%;
@@ -112,7 +121,7 @@
 }
 
 .sideBarOpen ~ .content {
-    margin-left: var(--sidebar-width);
+    margin-left: var(--sidebar-range);
     transition: margin-left .2s ease-in;
 }
 
@@ -138,6 +147,12 @@
 }
 
 .sideBarOpen ~ .toggle {
-    left: calc(var(--sidebar-width) + 10px);
-    transition: left .2s ease-in;
+    left: calc(var(--sidebar-range) + 10px);
+    transition: left .15s linear;
+}
+
+@media (max-width: 500px) {
+    .sideBarOpen ~ .content {
+        margin-left: 0;
+    }
 }

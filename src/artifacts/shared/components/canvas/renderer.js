@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { GlHandle } from "../utils/webgl";
 import useResizer from "../resizer";
 
@@ -101,14 +101,16 @@ function parseRenderData(shaders, vertexShaders, fragmentShaders, glHandle, cont
     return [rendererList, bufferList];
 }
 
-function Renderer({
+const Renderer = forwardRef(function Renderer({
     shaders = {},
     version = 300,
     vertexShaders = version > 100 ? defaultVertexShader300 : defaultVertexShader,
     fragmentShaders = version > 100 ? defaultFragmentShader300 : defaultFragmentShader,
     onLoad,
+    onBeforeFrame,
+    onAfterFrame,
     style: moreStyle = {}
-} = {}) {
+} = {}, ref) {
     const [renderers, setRenderers] = useState(null);
     const [glHandle, setGlHandle] = useState(null);
     const [size, setSize] = useState(null);
@@ -117,14 +119,17 @@ function Renderer({
     const dimensions = useResizer(canvasRef);
 
     const animate = useCallback(() => {
+        if (!!onBeforeFrame && !!glHandle)
+            onBeforeFrame();
+
         if (!!renderers)
             for (const renderer of renderers)
                 renderer.render();
 
-        console.log("rendering....");
-
+        if (!!onAfterFrame && !!glHandle)
+            onAfterFrame();
         animateRef.current = requestAnimationFrame(animate);
-    }, [renderers]);
+    }, [onBeforeFrame, onAfterFrame, glHandle, renderers]);
 
     useEffect(() => {
         animateRef.current = requestAnimationFrame(animate);
@@ -176,6 +181,7 @@ function Renderer({
             });
 
             setRenderers(renderer);
+            console.log("onload")
 
             if (!!onLoad)
                 onLoad({
@@ -184,15 +190,25 @@ function Renderer({
                     height: currentHeight,
                     buffers: buffers,
                 });
+
+            return () => {
+
+            };
         }
     }, [shaders, vertexShaders, fragmentShaders, onLoad, dimensions, glHandle, size]);
 
     return (
-        <canvas ref={canvasRef}
-                style={{ ...moreStyle }}
-                width={size?.width ?? 0}
-                height={size?.height ?? 0} />
+        <div ref={ref} style={{ ...moreStyle }}>
+          <canvas ref={canvasRef}
+                  style={{
+                      width: "100%",
+                      height: "100%",
+                      pointerEvents: "none"
+                  }}
+                  width={size?.width ?? 0}
+                  height={size?.height ?? 0} />
+        </div>
     );
-}
+});
 
 export default Renderer;

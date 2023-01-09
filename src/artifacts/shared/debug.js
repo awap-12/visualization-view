@@ -1,3 +1,4 @@
+import React, { useRef } from "react";
 import { Route } from "react-router";
 import { Link } from "react-router-dom";
 import { MdBurstMode, MdRadioButtonChecked, MdSpaceDashboard, MdNotificationsActive } from "react-icons/md";
@@ -75,6 +76,59 @@ function Alert() {
     );
 }
 
+function Multipass() {
+    const pointer = useRef({ x: 0, y: 0 });
+    const frame = useRef(0);
+    const canvasRef = useRef();
+
+    function handleMove(event) {
+        if (event.target === canvasRef.current)
+            [pointer.current.x, pointer.current.y] = [event.clientX, event.clientY];
+    }
+
+    return (
+        <div onPointerMove={handleMove}>
+          <Renderer
+              ref={canvasRef}
+              shaders={{
+                  buffer: {
+                      uniforms: {
+                          iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
+                          iTime:       (gl, loc, ctx) => gl.uniform1f(loc, performance.now() / 1000),
+                          iFrame:      (gl, loc, ctx) => gl.uniform1i(loc, frame.current),
+                          iMouse:      (gl, loc, ctx) => gl.uniform2f(loc, pointer.current.x, pointer.current.y),
+                          iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.buffers.buffer)
+                      },
+                      texture: (gl, ctx) => {
+                          ctx.initHalfFloatRGBATexture();
+                          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+                          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+                      }
+                  },
+                  image: {
+                      uniforms: {
+                          iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.buffers.buffer)
+                      }
+                  }
+              }}
+              fragmentShaders={{
+                  buffer: multipass.buffer,
+                  image: multipass.image
+              }}
+              onAfterFrame={() => {
+                  frame.current = frame.current + 1;
+              }}
+              style={{
+                  width: "100%",
+                  height: "65vh",
+                  minHeight: "300px"
+              }} />
+        </div>
+    );
+}
+
 export const alert = {
     link: (
         <Link className={styles.link} to={`${DEBUG_ROOT}/alert`}>
@@ -107,7 +161,7 @@ export const canvas = {
         <Route key={key} path="/canvas" element={
           <>
             <div className={styles.header}>
-              <h1>Alert</h1>
+              <h1>Canvas</h1>
             </div>
             <div className={styles.body}>
               <div className={styles.container}>
@@ -116,8 +170,7 @@ export const canvas = {
                         image: {
                             uniforms: {
                                 iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
-                                iTime:       (gl, loc, ctx) => gl.uniform1f(loc, performance.now() / 1000),
-                                iMouse:      (gl, loc, ctx) => gl.uniform2f(loc, 0, 0)
+                                iTime:       (gl, loc, ctx) => gl.uniform1f(loc, performance.now() / 1000)
                             }
                         }
                     }}
@@ -126,44 +179,13 @@ export const canvas = {
                     }}
                     style={{
                         width: "100%",
-                        height: "60vh",
+                        height: "65vh",
                         minHeight: "300px"
                     }} />
               </div>
               <br />
               <div className={styles.container}>
-                <Renderer
-                    shaders={{
-                        buffer: {
-                            uniforms: {
-                                iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
-                                iTime:       (gl, loc, ctx) => gl.uniform1f(loc, performance.now() / 1000),
-                                iMouse:      (gl, loc, ctx) => gl.uniform2f(loc, 0, 0),
-                                iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.buffers.buffer)
-                            },
-                            texture: (gl, ctx) => {
-                                ctx.initHalfFloatRGBATexture();
-                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-                                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-                            }
-                        },
-                        image: {
-                            uniforms: {
-                                iChannel0:   (gl, loc, ctx) => ctx.texture(loc, ctx.buffers.buffer)
-                            }
-                        }
-                    }}
-                    fragmentShaders={{
-                        buffer: multipass.buffer,
-                        image: multipass.image
-                    }}
-                    style={{
-                        width: "100%",
-                        height: "60vh",
-                        minHeight: "300px"
-                    }} />
+                <Multipass />
               </div>
             </div>
           </>
@@ -186,20 +208,22 @@ export const button = {
             </div>
             <div className={styles.body}>
               <div className={styles.container}>
-                <Renderer shaders={{
-                                image: {
-                                    uniforms: {
-                                        iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height)
-                                    }
-                                }
-                          }}
-                          fragmentShaders={fitColor.image}
-                          version={100}
-                          style={{
-                              width: "100%",
-                              height: "60vh",
-                              minHeight: "300px"
-                          }}/>
+                <Renderer
+                    shaders={{
+                        image: {
+                            uniforms: {
+                                iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
+                                iHue:        (gl, loc, ctx) => gl.uniform1f(loc, 0)
+                            }
+                        }
+                    }}
+                    fragmentShaders={fitColor.image}
+                    version={100}
+                    style={{
+                        width: "100%",
+                        height: "65vh",
+                        minHeight: "300px"
+                    }}/>
               </div>
               <div className={styles.container}>
                 <Button>Default</Button>

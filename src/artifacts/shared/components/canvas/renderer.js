@@ -102,7 +102,7 @@ function parseRenderData(shaders, vertexShaders, fragmentShaders, glHandle, cont
 }
 
 function Renderer({
-    shaders,
+    shaders = {},
     version = 300,
     vertexShaders = version > 100 ? defaultVertexShader300 : defaultVertexShader,
     fragmentShaders = version > 100 ? defaultFragmentShader300 : defaultFragmentShader,

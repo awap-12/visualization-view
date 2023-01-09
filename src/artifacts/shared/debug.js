@@ -5,8 +5,9 @@ import { Button, Container, Col, Row, Renderer, useAlertFallback } from ".";
 
 import styles from "./styles/debug.module.css";
 
-import * as uniform from "./fixtures/uniform/index.js";
-import * as multipass from "./fixtures/multipass/index.js";
+import * as uniform from "./fixtures/uniform";
+import * as multipass from "./fixtures/multipass";
+import * as fitColor from "./fixtures/button"
 
 const DEBUG_ROOT = "/artifact/debug";
 
@@ -184,6 +185,22 @@ export const button = {
               <h1>Button</h1>
             </div>
             <div className={styles.body}>
+              <div className={styles.container}>
+                <Renderer shaders={{
+                                image: {
+                                    uniforms: {
+                                        iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height)
+                                    }
+                                }
+                          }}
+                          fragmentShaders={fitColor.image}
+                          version={100}
+                          style={{
+                              width: "100%",
+                              height: "60vh",
+                              minHeight: "300px"
+                          }}/>
+              </div>
               <div className={styles.container}>
                 <Button>Default</Button>
               </div>

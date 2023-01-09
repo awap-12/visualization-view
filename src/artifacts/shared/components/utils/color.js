@@ -27,21 +27,28 @@ export function hexToRgb(hex, color = hex.toLowerCase()) {
 
 export function rgbToHsl(r, g, b) {
     r /= 255; g /= 255; b /= 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
+    const cMax = Math.max(r, g, b), cMin = Math.min(r, g, b), delta = cMax - cMin;
+    let h, s, l = (cMax + cMin) / 2;
 
-    if (max === min){
+    if (delta === 0){
         h = s = 0; // achromatic
     } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch(max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
+        s = l > 0.5
+            ? delta / (2 - cMax - cMin) :
+            delta / (cMax + cMin);
+        const deltaR = (((cMax - r) / 6) + (delta / 2)) / delta;
+        const deltaG = (((cMax - g) / 6) + (delta / 2)) / delta;
+        const deltaB = (((cMax - b) / 6) + (delta / 2)) / delta;
+        switch(cMax) {
+            case r: h = deltaB - deltaG; break;
+            case g: h = (1 / 3) + deltaR - deltaB; break;
+            case b: h = (2 / 3) + deltaG - deltaR; break;
             default: break;
         }
-        h /= 6;
+        if (h < 0)
+            h += 1;
+        else if (h > 1.0)
+            h -= 1;
     }
 
     return [h, s, l];

@@ -33,7 +33,7 @@ const Button = forwardRef(function Button({ children, component: Component = "bu
             case lightness > 0.75:
                 l = 100; break;
             default:
-                //const safeSaturation = 8 * ((lightness - 0.5) ** 2) + 0.28/* move upwards 0.28 */;
+                // const safeSaturation = 8 * ((lightness - 0.5) ** 2) + 0.28/* move upwards 0.28 */;
                 l = l * 100
                 break;
         }

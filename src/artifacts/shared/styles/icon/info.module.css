@@ -1,0 +1,27 @@
+.icon {
+    border-color: #c9dae1;
+}
+
+.icon:after,
+.icon:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    background-color: #c9dae1;
+}
+
+.icon:after {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-left: -3px;
+    top: 19px;
+}
+
+.icon:before {
+    width: 5px;
+    height: 29px;
+    bottom: 17px;
+    border-radius: 2px;
+    margin-left: -2px;
+}

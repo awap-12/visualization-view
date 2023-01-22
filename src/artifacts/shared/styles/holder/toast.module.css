@@ -1,0 +1,12 @@
+.holder {
+    width: min(80%, 450px);
+    height: 0;
+    top: 10px;
+    left: calc((100% - min(80%, 450px)) / 2);
+    pointer-events: none;
+    position: fixed;
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    z-index: 1200;
+}

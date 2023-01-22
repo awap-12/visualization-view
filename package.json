@@ -1,49 +1,49 @@
 {
-  "name": "visualization-view",
-  "version": "0.1.0",
-  "private": true,
-  "homepage": "https://awap-12.github.io/visualization-view",
-  "workspaces": [
-    "src/artifacts/*"
-  ],
-  "dependencies": {
-    "@testing-library/jest-dom": "latest",
-    "@testing-library/react": "latest",
-    "@testing-library/user-event": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-router": "latest",
-    "react-router-dom": "latest",
-    "react-scripts": "latest",
-    "web-vitals": "latest"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+    "name": "visualization-view",
+    "version": "0.1.0",
+    "private": true,
+    "homepage": "https://awap-12.github.io/visualization-view",
+    "workspaces": [
+        "src/artifacts/*"
     ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "jest": {
-    "moduleNameMapper": {
-      "^d3-(.*)$": "d3-$1/dist/d3-$1"
+    "dependencies": {
+        "@testing-library/jest-dom": "latest",
+        "@testing-library/react": "latest",
+        "@testing-library/user-event": "latest",
+        "react": "latest",
+        "react-dom": "latest",
+        "react-router": "latest",
+        "react-router-dom": "latest",
+        "react-scripts": "latest",
+        "web-vitals": "latest"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "jest": {
+        "moduleNameMapper": {
+            "^d3-(.*)$": "d3-$1/dist/d3-$1"
+        }
     }
-  }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { scaleLinear } from "d3-scale";
 import { ascending } from "d3-array"
 import { csv } from "d3-fetch";
-import { LineChart } from "shared";
+import { LineChart } from "graphic";
 
 //region TODO: Move to React context and replace with correct api
 import co2composite from "../fixtures/co2composite.csv";

@@ -1,0 +1,27 @@
+.container {
+    font-size: small;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.60);
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 1500;
+    transition: top .1s ease, left .1s ease, opacity .2s ease;
+}
+
+.content {
+    margin: 0.3rem 0.6rem;
+}
+
+.content p {
+    color: white;
+    margin: 0.2rem;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

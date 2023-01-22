@@ -12,11 +12,11 @@ export {
 
 export {
     Renderer
-} from "./components/canvas"
+} from "./components/canvas";
 
 export {
     default as useResizer
-} from "./components/resizer"
+} from "./components/resizer";
 
 export {
     BreakpointProvider,
@@ -29,3 +29,7 @@ export {
 export {
     default as InfoContextHolder
 } from "./components/holder";
+
+export {
+    Hue
+} from "./components/color";

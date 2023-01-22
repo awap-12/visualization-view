@@ -43,15 +43,45 @@ vec3 rgb2hsl(vec3 color) {
     return hsl;
 }
 
+vec3 hue2rgb(float hue) {
+    hue = fract(hue);
+    return clamp(vec3(
+        abs(hue * 6. - 3.) - 1.,
+        2. - abs(hue * 6. - 2.),
+        2. - abs(hue * 6. - 4.)
+    ), 0., 1.);
+}
+
+vec3 hsl2rgb(vec3 hsl) {
+    if (hsl.y == 0.) {
+        return vec3(hsl.z); //Luminance.
+    } else {
+        float b;
+        if(hsl.z < .5) {
+            b = hsl.z * (1. + hsl.y);
+        } else {
+            b = hsl.z + hsl.y - hsl.y * hsl.z;
+        }
+        float a = 2. * hsl.z - b;
+        return a + hue2rgb(hsl.x) * (b - a);
+    }
+}
+
 void main() {
     vec2 uv = gl_FragCoord.xy / iResolution.xy;
 
     // vec3 col = rgb2hsl(vec3(uv, 1.0));
-    vec3 col = vec3(uv, 0.0);
+    vec3 col = vec3(iHue / 360.0, 1.0, 0.5);
 
-    col.r = col.g = col.b = col.r * ((8.0 * (pow((uv.y - 0.5), 2.0)) + 0.28 < col.r) ? 1.0 : 0.0);
+    bool divide = (8.0 * pow((uv.y - 0.5), 2.0)) + 0.28 < uv.x;
+    if (uv.y > 0.5) {
+        col.b = divide ? pow(uv.y, 0.5) : 1.0;
+    } else {
+        col.b = divide ? uv.y : 0.0;
+        col.g = 0.95;
+    }
 
-    gl_FragColor = vec4(col, 1.0);
+    gl_FragColor = vec4(hsl2rgb(col), 1.0);
 }
 `;
 

@@ -26,30 +26,43 @@ export function hexToRgb(hex, color = hex.toLowerCase()) {
 }
 
 export function rgbToHsl(r, g, b) {
-    r /= 255; g /= 255; b /= 255;
-    const cMax = Math.max(r, g, b), cMin = Math.min(r, g, b), delta = cMax - cMin;
-    let h, s, l = (cMax + cMin) / 2;
+    const rgb = { r: r / 255, g: g / 255, b: b / 255 };
+    const [min, max] = getRange(rgb);
+    const hue = getHue(rgb, [min, max]);
+    const lightness = (min + max) / 2;
+    const delta = max - min;
 
-    if (delta === 0){
-        h = s = 0; // achromatic
-    } else {
-        s = l > 0.5
-            ? delta / (2 - cMax - cMin) :
-            delta / (cMax + cMin);
-        const deltaR = (((cMax - r) / 6) + (delta / 2)) / delta;
-        const deltaG = (((cMax - g) / 6) + (delta / 2)) / delta;
-        const deltaB = (((cMax - b) / 6) + (delta / 2)) / delta;
-        switch(cMax) {
-            case r: h = deltaB - deltaG; break;
-            case g: h = (1 / 3) + deltaR - deltaB; break;
-            case b: h = (2 / 3) + deltaG - deltaR; break;
-            default: break;
+    const saturation = delta !== 0
+        ? lightness > 0.5
+            ? delta / (2 - max - min)
+            : delta / (max + min)
+        : 0;
+
+    return [hue, saturation, lightness];
+}
+
+export function rgbToHwb(r, g, b) {
+    const rgb = { r: r / 255, g: g / 255, b: b / 255 };
+    const [min, max] = getRange(rgb);
+    const hue = getHue(rgb, [min, max]);
+
+    return [hue, min, 1 - max];
+}
+
+function getHue({ r, g, b }, [whiteness, value], fallback = 0) {
+    const delta = value - whiteness;
+
+    if (delta) {
+        switch (value) {
+            // calculate (segment + shift) * 60
+            case r: return ((g - b) / delta + (g < b ? 6 : 0)) * 60;
+            case g: return ((b - r) / delta + 2) * 60;
+            case b: return ((r - g) / delta + 4) * 60;
+            default: return fallback;
         }
-        if (h < 0)
-            h += 1;
-        else if (h > 1.0)
-            h -= 1;
-    }
+    } else return fallback;
+}
 
-    return [h, s, l];
+function getRange({ r, g, b }) {
+    return [Math.min(r, g, b), Math.max(r, g, b)];
 }

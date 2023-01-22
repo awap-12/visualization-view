@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Container, Row, Col } from "../layout";
-import { Button } from "../button";
 import { AlertContext } from "./context";
 
 import styles from "shared/styles/alert/modal.module.css";
@@ -94,9 +93,9 @@ function ModalAlert({
               }).map(([type, { text, visible, ...other }]) =>
                   !!visible
                       ? <Col key={type}>
-                          <Button {...other} variant="primary">
+                          <button {...other}>
                             {text}
-                          </Button>
+                          </button>
                         </Col>
                       : null
               )}

@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { AlertContext } from "./context";
-import { Alert } from "react-bootstrap";
 
-function ToastAlert({ id, timeout, type, message }) {
+import styles from "shared/styles/alert/toast.module.css";
+
+function ToastAlert({ className, id, timeout, type, message } = {}) {
     const { dispatch, options } = useContext(AlertContext);
     const [show, setShow] = useState(true);
     const timeoutTimer = useRef();
@@ -11,13 +12,14 @@ function ToastAlert({ id, timeout, type, message }) {
     useEffect(() => {
         const timer = timeoutTimer.current;
 
-        let temp = !!options.timeouts && type in options.timeouts
-            ? options.timeouts[type]
-            : timeout;
+        let temp = timeout ?? (!!options.timeouts && type in options.timeouts
+            ? options.timeouts[type] : options.timeouts);
 
-        if (typeof temp !== "undefined") {
+        if (!!temp && temp > 0) {
             clearTimeout(timer);
-            timeoutTimer.current = setTimeout(() => setShow(false), +temp);
+            timeoutTimer.current = setTimeout(() => {
+                setShow(false);
+            }, temp);
         }
 
         return () => clearTimeout(timer);
@@ -30,15 +32,31 @@ function ToastAlert({ id, timeout, type, message }) {
         if (show === false)
             deleteTimer.current = setTimeout(() => {
                 dispatch({ type: "delete", payload: id });
-            }, 2000); // animation should sync to css
+            }, 200); // animation should sync to css
 
         return () => clearTimeout(timer);
     }, [show, dispatch, id])
 
     return (
-        <Alert show={show} variant={type} dismissible={true} onClose={() => setShow(false)}>
+        <div className={[styles.alert, className].filter(Boolean).join(" ")}
+             style={{
+                 marginTop: show ? 0 : -10000,
+                 ...{
+                     success: {
+                         backgroundColor: "#d1e6dc",
+                         color: "#146c43",
+                         borderColor: "#a3cfbb"
+                     },
+                     warning: {
+                         backgroundColor: "#fff3cd",
+                         color: "#997404",
+                         borderColor: "#ffe69c"
+                     }
+                 }[type]
+             }}>
+          <button onClick={() => setShow(false)} />
           {message}
-        </Alert>
+        </div>
     );
 }
 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Col, Row, Stack } from "react-bootstrap";
 import { AlertContext, ToastAlert, ModalAlert } from "./alert";
+import { Col, Row } from "shared";
 
 import toastStyles from "shared/styles/holder/toast.module.css";
 import modalStyles from "shared/styles/holder/modal.module.css";
@@ -25,15 +25,13 @@ function InfoContextHolder() {
                 : null)}
           </div>
           <div className={toastStyles.holder}>
-            <Stack className="col-md-5 mx-auto">
-              {alertGrouped["toast"]?.map(props => (
-                  <Row key={props.id}>
-                    <Col>
-                      <ToastAlert {...props} />
-                    </Col>
-                  </Row>
-              ))}
-            </Stack>
+            {alertGrouped["toast"]?.map(props => (
+                <Row key={props.id}>
+                  <Col>
+                    <ToastAlert {...props} />
+                  </Col>
+                </Row>
+            ))}
           </div>
         </>
     );

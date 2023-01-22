@@ -2,6 +2,8 @@ import React, { forwardRef, useCallback, useEffect, useRef, useState } from "rea
 import { GlHandle } from "../utils/webgl";
 import useResizer from "../resizer";
 
+import styles from "shared/styles/canvas/renderer.module.css";
+
 const defaultVertexShader = `
     attribute vec2 V;
 
@@ -39,10 +41,10 @@ const defaultFragmentShader300 = `#version 300 es
 class ShaderRenderer {
     constructor(glHandle, context, program, uniforms) {
         this.program = program;
-        const gl = glHandle.gl;
+        this.gl = glHandle.gl;
         this.fillUniforms = () => {
             for (const uniform of uniforms)
-                uniform.setter(gl, uniform.location, context);
+                uniform.setter(this.gl, uniform.location, context);
         }
         this.draw = () => {
             glHandle.drawQuad(program.vertexAttributeLocation);
@@ -168,7 +170,7 @@ const Renderer = forwardRef(function Renderer({
         }
 
         if (!!currentWidth && !!currentHeight && !!currentGlHandle) {
-            const [renderer, buffers] = parseRenderData(shaders, vertexShaders, fragmentShaders, currentGlHandle, {
+            const [renderers, buffers] = parseRenderData(shaders, vertexShaders, fragmentShaders, currentGlHandle, {
                 gl: currentGlHandle.gl,
                 width: currentWidth,
                 height: currentHeight,
@@ -180,8 +182,7 @@ const Renderer = forwardRef(function Renderer({
                 },
             });
 
-            setRenderers(renderer);
-            console.log("onload")
+            setRenderers(renderers);
 
             if (!!onLoad)
                 onLoad({
@@ -190,21 +191,13 @@ const Renderer = forwardRef(function Renderer({
                     height: currentHeight,
                     buffers: buffers,
                 });
-
-            return () => {
-
-            };
         }
     }, [shaders, vertexShaders, fragmentShaders, onLoad, dimensions, glHandle, size]);
 
     return (
         <div ref={ref} style={{ ...moreStyle }}>
           <canvas ref={canvasRef}
-                  style={{
-                      width: "100%",
-                      height: "100%",
-                      pointerEvents: "none"
-                  }}
+                  className={styles.canvas}
                   width={size?.width ?? 0}
                   height={size?.height ?? 0} />
         </div>

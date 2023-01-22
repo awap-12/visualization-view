@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { Route } from "react-router";
 import { Link } from "react-router-dom";
 import { MdBurstMode, MdRadioButtonChecked, MdSpaceDashboard, MdNotificationsActive } from "react-icons/md";
-import { Button, Container, Col, Row, Renderer, useAlertFallback } from ".";
+import { Button, Container, Col, Row, Renderer, Hue, useAlertFallback } from ".";
 
 import styles from "./styles/debug.module.css";
 
@@ -76,12 +76,41 @@ function Alert() {
     );
 }
 
+function ButtonColor() {
+    const hue = useRef({ h: 0 });
+
+    return (
+        <>
+          <Hue width="100%" onChange={data => hue.current = data} />
+          <Renderer
+              shaders={{
+                  image: {
+                      uniforms: {
+                          iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
+                          iHue:        (gl, loc, ctx) => gl.uniform1f(loc, hue.current.h)
+                      }
+                  }
+              }}
+              fragmentShaders={fitColor.image}
+              version={100}
+              style={{
+                  width: "65vh",
+                  height: "65vh",
+                  margin: "0 auto",
+                  minWidth: "300px",
+                  minHeight: "300px"
+              }}/>
+        </>
+    );
+}
+
 function Multipass() {
     const pointer = useRef({ x: 0, y: 0 });
     const frame = useRef(0);
     const canvasRef = useRef();
 
     function handleMove(event) {
+        event.preventDefault();
         if (event.target === canvasRef.current)
             [pointer.current.x, pointer.current.y] = [event.clientX, event.clientY];
     }
@@ -208,29 +237,99 @@ export const button = {
             </div>
             <div className={styles.body}>
               <div className={styles.container}>
-                <Renderer
-                    shaders={{
-                        image: {
-                            uniforms: {
-                                iResolution: (gl, loc, ctx) => gl.uniform2f(loc, ctx.width, ctx.height),
-                                iHue:        (gl, loc, ctx) => gl.uniform1f(loc, 0)
-                            }
-                        }
-                    }}
-                    fragmentShaders={fitColor.image}
-                    version={100}
-                    style={{
-                        width: "100%",
-                        height: "65vh",
-                        minHeight: "300px"
-                    }}/>
+                <ButtonColor />
               </div>
+              <br />
               <div className={styles.container}>
                 <Button>Default</Button>
               </div>
               <br />
               <div className={styles.container}>
+                <Container>
+                  <Row>
+                    <Col>
+                      <Button color="#0d6efd">#0d6efd</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#198754">#198754</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#dc3545">#dc3545</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#ffc107">#ffc107</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#0dcaf0">#0dcaf0</Button>
+                    </Col>
+                  </Row>
+                </Container>
+              </div>
+              <br />
+              <div className={styles.container}>
                 <Button outline>Default</Button>
+              </div>
+              <br />
+              <div className={styles.container}>
+                <Container>
+                  <Row>
+                    <Col>
+                      <Button color="#0d6efd" outline>#0d6efd</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#198754" outline>#198754</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#dc3545" outline>#dc3545</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#ffc107" outline>#ffc107</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#0dcaf0" outline>#0dcaf0</Button>
+                    </Col>
+                  </Row>
+                </Container>
+              </div>
+              <br />
+              <div className={styles.container}>
+                <Container>
+                  <Row>
+                    <Col>
+                      <Button color="#0d6efd" disabled>#0d6efd</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#198754" disabled>#198754</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#dc3545" disabled>#dc3545</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#ffc107" disabled>#ffc107</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#0dcaf0" disabled>#0dcaf0</Button>
+                    </Col>
+                  </Row>
+                  <br />
+                  <Row>
+                    <Col>
+                      <Button color="#0d6efd" disabled outline>#0d6efd</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#198754" disabled outline>#198754</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#dc3545" disabled outline>#dc3545</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#ffc107" disabled outline>#ffc107</Button>
+                    </Col>
+                    <Col>
+                      <Button color="#0dcaf0" disabled outline>#0dcaf0</Button>
+                    </Col>
+                  </Row>
+                </Container>
               </div>
             </div>
           </>

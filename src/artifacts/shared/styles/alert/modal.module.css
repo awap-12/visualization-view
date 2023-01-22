@@ -58,8 +58,12 @@
 .footer button {
     min-width: 4.5rem;
     background-color: #7cd1f9;
-    font-weight: 550;
-    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 8px 16px;
+    border: 1px solid #ace3fd;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 @keyframes modal-pop {

@@ -1,0 +1,158 @@
+:root {
+    --sidebar-width: 20%;
+    --sidebar-min-width: 185px;
+    --sidebar-max-width: 220px;
+    --sidebar-range: clamp(
+            var(--sidebar-min-width),
+            var(--sidebar-width),
+            var(--sidebar-max-width)
+    );
+}
+
+.app {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.sideBar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--sidebar-range) * -1);
+    z-index: 5;
+    width: var(--sidebar-width);
+    max-width: var(--sidebar-max-width);
+    min-width: var(--sidebar-min-width);
+    font-weight: 200;
+    color: #fff;
+    background-position: 50%;
+    background-size: cover;
+    transition: left .1s ease-in;
+}
+
+.sideBar:after,
+.sideBar:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    content: "";
+}
+
+.sideBar:before {
+    background: #000;
+    opacity: .33;
+}
+
+.sideBar:after {
+    z-index: 3;
+    background: #fc5c7d;
+    background: linear-gradient(180deg, #6a82fb, #fc5c7d);
+    opacity: 1;
+}
+
+.sideBar[data-image]:after {
+    opacity: .77;
+}
+
+.sideBarOpen {
+    left: 0;
+    transition: left .2s ease-in;
+}
+
+.sideBarBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-position: 50%;
+    background-size: cover;
+}
+
+.sideBarContent {
+    position: relative;
+    z-index: 4;
+    height: calc(100vh - 20px);
+    padding-bottom: 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.sideBarList {
+    display: flex;
+    flex-direction: column!important;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-top: 20px;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.sideBarItem {
+    margin: 5px 10px;
+    color: #f8f9fa;
+    border-radius: 4px;
+    opacity: .86;
+}
+
+.content {
+    display: inline-flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+.sideBar ~ .content {
+    transition: margin-left .1s ease-in;
+}
+
+.sideBarOpen ~ .content {
+    margin-left: var(--sidebar-range);
+    transition: margin-left .2s ease-in;
+}
+
+.toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    z-index: 35;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 50%;
+    background: #db92ff;
+    cursor: pointer;
+}
+
+.sideBar ~ .toggle {
+    transition: left .1s ease-in;
+}
+
+.sideBarOpen ~ .toggle {
+    left: calc(var(--sidebar-range) + 10px);
+    transition: left .15s linear;
+}
+
+@media (max-width: 500px) {
+    .sideBarOpen ~ .content {
+        margin-left: 0;
+    }
+}

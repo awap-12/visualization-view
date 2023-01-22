@@ -52,7 +52,7 @@ function formatText(element, maxWidth, lineHeight = 1.1, unit = "em") {
         line.push(word);
         tspan.text(line.join(" "));
         if (context.measureText(tspan.text()).width > maxWidth) {
-            line.pop()
+            line.pop();
             tspan.text(line.join(" "));
             line = [word];
             tspan = element.append("tspan")

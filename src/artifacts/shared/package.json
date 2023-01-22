@@ -1,8 +1,7 @@
 {
     "name": "shared",
     "version": "1.0.0",
-    "devDependencies": {
-        "@emotion/babel-plugin": "latest",
+    "dependencies": {
         "@emotion/react": "latest",
         "react-icons": "latest"
     }

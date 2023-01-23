@@ -13,21 +13,31 @@ import * as fitColor from "./fixtures/button"
 const DEBUG_ROOT = "/artifact/debug";
 
 function Alert() {
-    const { success, warning } = useAlertFallback();
+    const { success, warning, info, danger } = useAlertFallback();
 
     return (
         <>
           <div className={styles.container}>
             <Container>
               <Row>
-                <Col md={6}>
-                  <Button onClick={() => success("Nice! it is a success message")}>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => success("Nice! it is a success message")}>
                     Toast Success
                   </Button>
                 </Col>
-                <Col md={6}>
-                  <Button onClick={() => warning("Op... it is a warning message")}>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => warning("Op... it is a warning message")}>
                     Toast Warning
+                  </Button>
+                </Col>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => info("Hello. it is a info message")}>
+                    Toast Info
+                  </Button>
+                </Col>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => danger("Oh... it is a danger message")}>
+                    Toast Danger
                   </Button>
                 </Col>
               </Row>
@@ -37,14 +47,24 @@ function Alert() {
           <div className={styles.container}>
             <Container>
               <Row>
-                <Col md={6}>
-                  <Button onClick={() => success("Nice! it is a success message", { category: "modal" })}>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => success("Nice! it is a success message", { category: "modal" })}>
                     Modal Success
                   </Button>
                 </Col>
-                <Col md={6}>
-                  <Button onClick={() => warning("Op... it is a warning message", { category: "modal" })}>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => warning("Op... it is a warning message", { category: "modal" })}>
                     Modal Warning
+                  </Button>
+                </Col>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => info("Hello. it is a info message", { category: "modal" })}>
+                    Modal Info
+                  </Button>
+                </Col>
+                <Col md={3}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => danger("Oh... it is a danger message", { category: "modal" })}>
+                    Modal Danger
                   </Button>
                 </Col>
               </Row>
@@ -55,7 +75,7 @@ function Alert() {
             <Container>
               <Row>
                 <Col>
-                  <Button onClick={() => {
+                  <Button style={{ minWidth: "100%" }} onClick={() => {
                     success("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec mollis enim eros, sit amet ultrices sapien fermentum ut. Praesent rutrum accumsan augue feugiat scelerisque. Curabitur imperdiet blandit nisl id mollis. Suspendisse nec convallis sem, eget dictum orci. Suspendisse rutrum metus nisi, eu ultrices odio pretium a. Aenean sit amet est ut tortor viverra suscipit. Nullam ex diam, rutrum id semper ac, ullamcorper at diam. Donec vel arcu nisi. Mauris faucibus magna ac nulla ornare gravida. Nulla facilisi. Morbi at nulla et mi tincidunt ultricies. Suspendisse consequat sit amet arcu ac egestas. In posuere tellus sit amet imperdiet bibendum. Maecenas vestibulum dapibus hendrerit. In hac habitasse platea dictumst. Nulla sed mi rutrum, feugiat nulla non, lacinia diam.\n" +
                         "\n" +
                         "Etiam malesuada non dui et dapibus. Pellentesque volutpat velit a dapibus sollicitudin. Phasellus aliquet dui ac lectus fermentum vehicula. Quisque aliquet quis tortor eget feugiat. Fusce a nunc nisl. Curabitur bibendum nisl scelerisque urna luctus aliquet. Quisque dui lectus, feugiat nec turpis id, semper feugiat libero. Vestibulum non massa diam. Donec hendrerit a mauris sed venenatis.\n" +
@@ -81,7 +101,12 @@ function ButtonColor() {
 
     return (
         <>
-          <Hue width="100%" onChange={data => hue.current = data} />
+          <Hue style={{
+                   margin: "0 auto",
+                   maxWidth: 600
+               }}
+               width="100%"
+               onChange={data => hue.current = data} />
           <Renderer
               shaders={{
                   image: {
@@ -94,11 +119,10 @@ function ButtonColor() {
               fragmentShaders={fitColor.image}
               version={100}
               style={{
-                  width: "65vh",
-                  height: "65vh",
+                  width: "calc(100% - 2.4rem)",
+                  aspectRatio: "1 / 1",
                   margin: "0 auto",
-                  minWidth: "300px",
-                  minHeight: "300px"
+                  maxWidth: 600
               }}/>
         </>
     );
@@ -241,7 +265,7 @@ export const button = {
               </div>
               <br />
               <div className={styles.container}>
-                <Button>Default</Button>
+                <Button style={{ minWidth: "min(85%, 350px)" }}>Default</Button>
               </div>
               <br />
               <div className={styles.container}>
@@ -267,7 +291,7 @@ export const button = {
               </div>
               <br />
               <div className={styles.container}>
-                <Button outline>Default</Button>
+                <Button style={{ minWidth: "min(85%, 350px)" }} outline>Default</Button>
               </div>
               <br />
               <div className={styles.container}>

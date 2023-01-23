@@ -136,8 +136,8 @@ function Graphic() {
           <div className={sharedStyles.container}>
             <Container fluid>
               <Row>
-                <Col>
-                  <Button onClick={() => {
+                <Col md={6}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => {
                       line("post", {
                           source: lineChartData,
                           x: value => new Date(value["time"]),
@@ -166,8 +166,8 @@ function Graphic() {
                       Create Line Emitter
                   </Button>
                 </Col>
-                <Col>
-                  <Button onClick={() =>{
+                <Col md={6}>
+                  <Button style={{ minWidth: "100%" }} onClick={() =>{
                       line("put",{
 
                       })
@@ -177,13 +177,22 @@ function Graphic() {
                 </Col>
               </Row>
               <Row>
-                <Col>
-                  <Button onClick={() => {
+                <Col md={6}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => {
                       doughnut("post", {
                           source: doughnutChartData
                       });
                   }}>
-                    Doughnut Trigger
+                    Create Doughnut Emitter
+                  </Button>
+                </Col>
+                <Col md={6}>
+                  <Button style={{ minWidth: "100%" }} onClick={() => {
+                      doughnut("put", {
+                          source: doughnutChartData
+                      });
+                  }}>
+                    Update Doughnut Emitter
                   </Button>
                 </Col>
               </Row>

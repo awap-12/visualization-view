@@ -51,6 +51,16 @@ function ToastAlert({ className, id, timeout, type, message } = {}) {
                          backgroundColor: "#fff3cd",
                          color: "#997404",
                          borderColor: "#ffe69c"
+                     },
+                     info: {
+                         backgroundColor: "#cfe2ff",
+                         color: "#0a58ca",
+                         borderColor: "#9ec5fe"
+                     },
+                     error: {
+                         backgroundColor: "#f8d7da",
+                         color: "#b02a37",
+                         borderColor: "#f1aeb5"
                      }
                  }[type]
              }}>

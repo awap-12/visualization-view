@@ -1,15 +1,16 @@
 .container {
-    font-size: small;
     position: fixed;
     background-color: rgba(0, 0, 0, 0.60);
     border-radius: 3px;
     pointer-events: none;
+    font: clamp(0.5rem, 1vw, 1rem) "Times New Roman";
     z-index: 1500;
+    translate: -50% 10px;
     transition: top .1s ease, left .1s ease, opacity .2s ease;
 }
 
 .content {
-    margin: 0.3rem 0.6rem;
+    margin: 0.2rem 0.4rem;
 }
 
 .content p {

@@ -20,6 +20,8 @@ import Tooltip from "./tooltip";
  * @param {[[function,function,[number,number],[{orient:string,offset:number,title?:object,calls?:[function]}]]]} dataDescHandler A wrapper for [Data analyzer, Type of scalar, Range of data type in chart, Axes data]
  * @param {[[func:function,config?:function]]} typeDescHandler A wrapper for [Type analyzer, Type info formatting callback]
  * @param {object} options
+ * @param {string} options.className The addition className
+ * @param {object} options.style The styles object
  * @return {JSX.Element}
  */
 function LineChart({ id, width, height, margin, stroke, source, defined, dataDescHandler, typeDescHandler, ...options } = {}) {
@@ -151,9 +153,9 @@ function LineChart({ id, width, height, margin, stroke, source, defined, dataDes
 
     return(
         <div ref={chartRef}
-             className={{...options.className}}
+             className={options.className}
              style={{
-                 marginBottom: "2rem",
+                 marginBottom: "0.5rem",
                  ...options.style
              }}>
           <LabelGroup typeConfig={(typeDesc ?? [])[0]?.config}

@@ -6,6 +6,8 @@ import { interpolate, quantize } from "d3-interpolate";
 import { interpolateRainbow } from "d3-scale-chromatic";
 import { select } from "d3-selection";
 
+import styles from "graphic/styles/doughnut.module.css";
+
 const context = document.createElement("canvas").getContext("2d");
 
 export function formatPartition(data) {
@@ -65,18 +67,13 @@ function formatText(element, maxWidth, lineHeight = 1.1, unit = "em") {
 
 /**
  * A DoughnutChart
- * @param source data source
+ * @param {object} source data source
  * @param width
  * @param height
  * @param radius
  * @return {JSX.Element}
  */
-function DoughnutChart({
-    source,
-    width = 640,
-    height = 640,
-    radius = width / 6
-}) {
+function DoughnutChart({ source, width = 640, height = 640, radius = width / 6 }) {
     const svgRef = useRef(null);
 
     useEffect(() => {
@@ -87,13 +84,6 @@ function DoughnutChart({
 
             const color = formatColor(source);
             const arc = formatArc(radius);
-
-            svg.attr("width", width)
-                .attr("height", height)
-                .attr("viewBox", [0, 0, width, height])
-                .style("font", "9px sans-serif");
-
-            container.attr("transform", `translate(${width / 2},${width / 2})`);
 
             const path = container.select(".path")
                 .selectAll("path")
@@ -154,8 +144,9 @@ function DoughnutChart({
                     .attrTween("d", d => () => arc(d.current));
 
                 label.filter(function(d) {
-                    return +this.getAttribute("fill-opacity") || labelVisible(d.target);
-                }).transition(t)
+                        return +this.getAttribute("fill-opacity") || labelVisible(d.target);
+                    })
+                    .transition(t)
                     .attr("fill-opacity", d => +labelVisible(d.target))
                     .attrTween("transform", d => () => labelTransform(d.current));
             }
@@ -177,10 +168,17 @@ function DoughnutChart({
     });
 
     return (
-        <svg ref={svgRef}>
-          <g className="container">
+        <svg ref={svgRef}
+             className={styles.svg}
+             width={width}
+             height={height}
+             viewBox={`0 0 ${width} ${height}`}>
+          <g className="container"
+             transform={`translate(${width / 2},${width / 2})`}>
             <g className="path" />
-            <g className="label" pointerEvents="none" textAnchor="middle" />
+            <g className="label"
+               pointerEvents="none"
+               textAnchor="middle" />
             <circle className="parent" />
           </g>
         </svg>

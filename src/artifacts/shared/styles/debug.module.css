@@ -6,6 +6,10 @@
     border: 1px solid rgba(var(--violet-rgb), 0.3);
 }
 
+.container button {
+    margin: 6px 0;
+}
+
 .container {
     padding: 1.2rem;
     border: 1px solid #dee2e6;

@@ -38,6 +38,32 @@ function useAlertFallback(category = "toast") {
                     ...options
                 }
             });
+        }, [category, dispatch]),
+        info: useCallback((message, options) => {
+            dispatch({
+                type: "post",
+                payload: {
+                    id: formatId(),
+                    type: "info",
+                    category: category,
+                    timeout: 1000,
+                    message: message,
+                    ...options
+                }
+            });
+        }, [category, dispatch]),
+        danger: useCallback((message, options) => {
+            dispatch({
+                type: "post",
+                payload: {
+                    id: formatId(),
+                    type: "error",
+                    category: category,
+                    timeout: 2000,
+                    message: message,
+                    ...options
+                }
+            });
         }, [category, dispatch])
     }
 }

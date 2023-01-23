@@ -2,11 +2,20 @@ import React, { forwardRef, useEffect, useRef, useState } from "react";
 
 import styles from "graphic/styles/tooltip.module.css";
 
-const MIN_OFFSET = -(2 ** 32);
+const MIN_OFFSET = -(2 ** 16);
 
 const Tooltip = forwardRef(function Tooltip({ position = null, visible = false, content }, ref) {
     const [visibility, setVisibility] = useState(visible);
+    const [location, setLocation] = useState({ x: MIN_OFFSET, y: MIN_OFFSET });
     const displayTimer = useRef();
+
+    useEffect(() => {
+        const x = position?.x ?? MIN_OFFSET, y = position?.y ?? MIN_OFFSET;
+        setLocation({
+            x: x === 0 ? MIN_OFFSET: x,
+            y: y === 0 ? MIN_OFFSET : y
+        });
+    }, [position]);
 
     useEffect(() => {
         const timer = displayTimer.current;
@@ -27,8 +36,8 @@ const Tooltip = forwardRef(function Tooltip({ position = null, visible = false, 
              style={{
                  display: visibility ? "flex" : "none",
                  opacity: +visible,
-                 left: `${position?.x ?? MIN_OFFSET}px`,
-                 top: `${position?.y ?? MIN_OFFSET}px`
+                 left: `${location.x}px`,
+                 top: `${location.y}px`
              }}>
           <div className={styles.content}>
             {content?.map((text, key) => <p key={key}>{text}</p>)}

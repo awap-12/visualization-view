@@ -1,11 +1,27 @@
-import React, {useState} from "react";
+import {useEffect, useState} from "react";
+import { ascending } from "d3-array"
+import { csv } from "d3-fetch";
 
-function FetchStrategy({ type }) {
+function useFetchStrategyLoader({ src, dataMapper }) {
     const [chartData, setChartData] = useState(null);
 
-    return (
-        <></>
-    );
+    // file selector
+    useEffect(() => {
+        let cache = [], jobs = [];
+        void (async () => {
+            Object.entries(src).forEach(([key, path]) => {
+                jobs.push(csv(path, data => {
+                    //const []
+                    return {
+                        type: key,
+                        //...Object.entries([])
+                    }
+                }))
+            });
+        });
+    }, [src]);
+
+    return chartData;
 }
 
-export default FetchStrategy;
+export default useFetchStrategyLoader;

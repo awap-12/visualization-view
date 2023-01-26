@@ -61,5 +61,5 @@ void async function() {
     /** write to file system */
     await checkFolder(TARGET);
 
-    await writeFile(join(TARGET, "HumanEvolutionAndActivities.csv"), nonTitle);
+    await writeFile(join(TARGET, "human-evolution-and-activities.csv"), nonTitle);
 }();

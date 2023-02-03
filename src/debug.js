@@ -6,6 +6,7 @@ import styles from "./styles/debug.module.css";
 
 import * as DebugShared from "shared/debug";
 import * as DebugGraphic from "graphic/debug";
+import * as DebugImplement from "implement/debug";
 import * as DebugApi from "api/debug";
 
 function Debug() {
@@ -14,7 +15,7 @@ function Debug() {
     const [sidebarShow, setSideBarShow] = useState(true);
 
     useEffect(() => {
-        const { linkGroup, routeGroup } = [DebugShared, DebugGraphic, DebugApi]
+        const { linkGroup, routeGroup } = [DebugShared, DebugGraphic, DebugImplement, DebugApi]
             .reduce((previous, module) => {
                 const { linkGroup = [], routeGroup = [] } = previous ?? {};
                 for (const { link, route } of Object.values({ ...module })) {

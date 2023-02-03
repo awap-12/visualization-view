@@ -68,13 +68,20 @@ const dataSheet = {
     }
 }
 
+const dataMappers = {
+
+};
+
 /**
+ * @param {string|object} src
  * @return {object}
  */
 function useLocalStrategyLoader({
     src
 }) {
-    return useFetchStrategyLoader(src);
+    return useFetchStrategyLoader({
+        src: typeof src === "string" ? dataSheet[src] : src
+    });
 }
 
 export default useLocalStrategyLoader;

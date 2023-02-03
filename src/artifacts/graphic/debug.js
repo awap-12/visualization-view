@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Route } from "react-router";
 import { Link } from "react-router-dom";
-import { IoBarChart  } from "react-icons/io5";
+import { IoLogoReact  } from "react-icons/io5";
 import { ascending } from "d3-array";
 import { csv } from "d3-fetch";
 import { Button, Col, Container, Row } from "shared";
@@ -225,7 +225,7 @@ const DEBUG_ROOT = "/artifact/debug";
 export const graphic = {
     link: (
         <Link className={sharedStyles.link} to={`${DEBUG_ROOT}/graphic`}>
-          <IoBarChart className={sharedStyles.icon} />
+          <IoLogoReact className={sharedStyles.icon} />
           <span>Graphic</span>
         </Link>
     ),

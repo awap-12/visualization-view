@@ -1,3 +1,5 @@
+import useFetchStrategyLoader from "./fetch";
+
 //region Webpack loading fixtures.
 import GlobalAnnual from "../fixtures/base01/HadCRUT-global-annual.csv";
 import GlobalMonthly from "../fixtures/base01/HadCRUT-global-monthly.csv";
@@ -30,7 +32,6 @@ import Co2EmissionLayer2 from "../fixtures/base09/co2-emission-layer2.csv";
 import Co2EmissionLayer3 from "../fixtures/base09/co2-emission-layer3.csv";
 
 import HumanEvolution from "../fixtures/base10/human-evolution-and-activities.csv";
-import useFetchStrategyLoader from "./fetch";
 
 //endregion
 
